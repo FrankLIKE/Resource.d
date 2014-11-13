@@ -1,0 +1,70 @@
+object CurrentProject: TCEProject
+  RootFolder = '..'
+  OptionsCollection = <  
+    item
+      name = 'debug'
+      debugingOptions.debug = True
+      debugingOptions.addDInformations = True
+      outputOptions.noBoundsCheck = False
+      outputOptions.boundsCheck = onAlways
+      pathsOptions.outputFilename = '<CPP>..\bin\resman.d.exe'
+      pathsOptions.Imports.Strings = (
+        '<CPP>..\src\'
+      )
+      preBuildProcess.options = []
+      preBuildProcess.parameters.Strings = (
+        'dgdgd'
+        'ghdfgh'
+      )
+      preBuildProcess.showWindow = swoNone
+      postBuildProcess.options = []
+      postBuildProcess.parameters.Strings = (
+        'dgdgd'
+        'ghdfgh'
+      )
+      postBuildProcess.showWindow = swoNone
+      runOptions.options = [poNewConsole]
+      runOptions.parameters.Strings = (
+        'dgdgd'
+        'ghdfgh'
+        'dgfsdfg'
+        'sgfsdgfs'
+        'sdfgdgf'
+      )
+      runOptions.showWindow = swoShow
+    end  
+    item
+      name = 'unittest'
+      outputOptions.noBoundsCheck = False
+      outputOptions.boundsCheck = onAlways
+      outputOptions.unittest = True
+      preBuildProcess.options = []
+      preBuildProcess.showWindow = swoNone
+      postBuildProcess.options = []
+      postBuildProcess.showWindow = swoNone
+      runOptions.options = []
+      runOptions.showWindow = swoNone
+    end  
+    item
+      name = 'release'
+      outputOptions.inlining = True
+      outputOptions.noBoundsCheck = False
+      outputOptions.boundsCheck = offAlways
+      outputOptions.optimizations = True
+      outputOptions.release = True
+      preBuildProcess.options = []
+      preBuildProcess.showWindow = swoNone
+      postBuildProcess.options = []
+      postBuildProcess.showWindow = swoNone
+      runOptions.options = [poNewConsole]
+      runOptions.parameters.Strings = (
+        'zerzrzr'
+      )
+      runOptions.showWindow = swoShow
+    end>
+  Sources.Strings = (
+    '..\src\resource.d'
+    '..\src\z85.d'
+  )
+  ConfigurationIndex = 0
+end

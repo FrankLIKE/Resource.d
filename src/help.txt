@@ -1,0 +1,11 @@
++-------------------------------------------------------+
+| RESOURCE.D - resource encoder & manager               |
++-------------------------------------------------------+
+| -h --help..........: displays this message.           |
+| --fraw=file;file...: list of resource, utf8 encoded.  |
+| --fb16=file;file...: list of resource, base16 encoded.|
+| --fb64=file;file...: list of resource, base64 encoded.|
+| --fz85=file;file...: list of resource, base85 encoded.|
+| --of=file..........: output filename.                 | 
+| --om=the.module....: output qualified module name.    |
++-------------------------------------------------------+
