@@ -29,3 +29,21 @@ public uint crc322uint(in ubyte[4] aCrc32)
         foreach(i; 0..4) * (ptr + i) = aCrc32[3-i];
     return result;
 }
+
+/**
+ * splits the encoded resource representation in multiple lines.
+ */
+string splitConstString(char[] input, size_t columns = 80)
+{
+    size_t lo, hi;
+    string result;
+    auto lines = input.length / columns;
+    auto tail = input.length - lines * columns;
+    foreach(i; 0 .. lines){
+        lo = i * columns;
+        hi = lo + columns;
+        result ~= "\t\"" ~ input[lo .. hi] ~ "\" ~\r\n";
+    }
+    result ~= "\t" ~ "\"" ~ input[hi .. $-1] ~ "\"";
+    return result;
+}

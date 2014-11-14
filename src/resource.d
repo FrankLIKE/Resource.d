@@ -171,6 +171,8 @@ void main(string[] args){
     foreach (i; 0 .. resItems.length -1)
         outputFname.append(format("\r\n\t" ~ "\"" ~ "%s" ~ "\"" ~ ",", resItems[i].encoded));
     outputFname.append(format("\r\n\t" ~ "\"" ~ "%s" ~ "\"" ~ "\r\n];", resItems[$-1].encoded));
+//        outputFname.append(format("\r\n" ~ "%s,\r\n", splitConstString(resItems[i].encoded)));
+//    outputFname.append(format("\r\n" ~ "%s];", splitConstString(resItems[$-1].encoded)));
 
     // writes the resources identifiers to the module
     outputFname.append("\r\n\r\n");
