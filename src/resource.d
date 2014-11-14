@@ -168,35 +168,35 @@ void main(string[] args){
     // writes the resource representations to the module
     outputFname.append("\r\n\r\n");
     outputFname.append("static const resource_txt = [");
-    for (auto i = 0; i < resItems.length -1; i++)
+    foreach (i; 0 .. resItems.length -1)
         outputFname.append(format("\r\n\t" ~ "\"" ~ "%s" ~ "\"" ~ ",", resItems[i].encoded));
     outputFname.append(format("\r\n\t" ~ "\"" ~ "%s" ~ "\"" ~ "\r\n];", resItems[$-1].encoded));
 
     // writes the resources identifiers to the module
     outputFname.append("\r\n\r\n");
     outputFname.append("static const resource_idt = [");
-    for (auto i = 0; i < resItems.length -1; i++)
+    foreach (i; 0 .. resItems.length -1)
         outputFname.append(format("\r\n\t" ~ "\"" ~ "%s" ~ "\"" ~ ",", resItems[i].identifier));
     outputFname.append(format("\r\n\t" ~ "\"" ~ "%s" ~ "\"" ~ "\r\n];", resItems[$-1].identifier));
 
     // writes the resources encoder kind to the module
     outputFname.append("\r\n\r\n");
     outputFname.append("static const resource_enc = [");
-    for (auto i = 0; i < resItems.length -1; i++)
+    foreach (i; 0 .. resItems.length -1)
         outputFname.append(format("\r\n\t%s.%s,", ResEncoding.stringof, resItems[i].encoding));
     outputFname.append(format("\r\n\t%s.%s \r\n];", ResEncoding.stringof, resItems[$-1].encoding));
 
     // writes the resources initial sums to the module
     outputFname.append("\r\n\r\n");
     outputFname.append("static const resource_sumi = [");
-    for (auto i = 0; i < resItems.length -1; i++)
+    foreach (i; 0 .. resItems.length -1)
         outputFname.append(format("\r\n\t" ~ "%.d" ~ ",", resItems[i].initialSum));
     outputFname.append(format("\r\n\t" ~ "%.d" ~ "\r\n];", resItems[$-1].initialSum));
 
     // writes the resources encoded sums to the module
     outputFname.append("\r\n\r\n");
     outputFname.append("static const resource_sume = [");
-    for (auto i = 0; i < resItems.length -1; i++)
+    foreach (i; 0 .. resItems.length -1)
         outputFname.append(format("\r\n\t" ~ "%.d" ~ ",", resItems[i].encodedSum));
     outputFname.append(format("\r\n\t" ~ "%.d" ~ "\r\n];", resItems[$-1].encodedSum));
 
