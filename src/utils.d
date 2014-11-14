@@ -19,7 +19,7 @@ public char[2] ubyte2Hex(ubyte aUbyte)
  * Converts a CRC32 to a BigEndian uint.
  * It grants a resource module to be cross-plateform.
  */
-public uint crc322uint(in ubyte[] aCrc32)
+public uint crc322uint(in ubyte[4] aCrc32)
 {
     uint result;
     ubyte* ptr = cast(ubyte*) &result;
