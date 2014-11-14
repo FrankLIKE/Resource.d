@@ -24,7 +24,7 @@ enum ResEncoding {
 /**
  * Resource item.
  * The resource properties and the encoded form are generated in the constructor.
- * The two 32 bit digest are used for checking "data integrity", not for "security".
+ * The two 32 bit digesst are used for checking "data integrity", not for "security".
  */
 struct ResItem{
     private:

@@ -50,6 +50,8 @@ object CurrentProject: TCEProject
   Sources.Strings = (
     '..\src\resource.d'
     '..\src\z85.d'
+    '..\src\utils.d'
+    '..\src\item.d'
   )
   ConfigurationIndex = 0
 end
