@@ -32,6 +32,7 @@ public uint crc322uint(in ubyte[4] aCrc32)
 
 /**
  * splits the encoded resource representation in multiple lines.
+ * Problem: not UTF-8 aware (does not always split on a code point)
  */
 string splitConstString(char[] input, size_t columns = 80)
 {

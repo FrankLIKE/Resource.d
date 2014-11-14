@@ -8,7 +8,7 @@ object CurrentProject: TCEProject
       messagesOptions.showColumnsNumber = True
       outputOptions.noBoundsCheck = False
       outputOptions.boundsCheck = onAlways
-      pathsOptions.outputFilename = '<CPP>..\bin\resource.d.exe'
+      pathsOptions.outputFilename = '<CPP>\..\bin\resource.d.exe'
       pathsOptions.Imports.Strings = (
         '<CPP>..\src\'
       )
@@ -16,36 +16,16 @@ object CurrentProject: TCEProject
       preBuildProcess.showWindow = swoNone
       postBuildProcess.options = []
       postBuildProcess.showWindow = swoNone
-      runOptions.options = [poUsePipes, poStderrToOutPut]
-      runOptions.showWindow = swoNone
-    end  
-    item
-      name = 'unittest'
-      messagesOptions.showColumnsNumber = True
-      outputOptions.noBoundsCheck = False
-      outputOptions.boundsCheck = onAlways
-      outputOptions.unittest = True
-      preBuildProcess.options = []
-      preBuildProcess.showWindow = swoNone
-      postBuildProcess.options = []
-      postBuildProcess.showWindow = swoNone
-      runOptions.options = []
-      runOptions.showWindow = swoNone
-    end  
-    item
-      name = 'release'
-      messagesOptions.showColumnsNumber = True
-      outputOptions.inlining = True
-      outputOptions.noBoundsCheck = False
-      outputOptions.boundsCheck = offAlways
-      outputOptions.optimizations = True
-      outputOptions.release = True
-      preBuildProcess.options = []
-      preBuildProcess.showWindow = swoNone
-      postBuildProcess.options = []
-      postBuildProcess.showWindow = swoNone
-      runOptions.options = []
-      runOptions.showWindow = swoNone
+      runOptions.options = [poNewConsole]
+      runOptions.parameters.Strings = (
+        '--fraw=..\res\res_utf8_1.txt;..\res\res_utf8_2.txt'
+        '--fb16=..\res\res_ansi_1.txt;..\res\res_ansi_2.txt'
+        '--fb64=..\res\res_img1.png;..\res\res_img2.png'
+        '--fz85=..\res\res_rnd1.dat'
+        '--of=generate1.d'
+        '--om=project.resources'
+      )
+      runOptions.showWindow = swoShow
     end>
   Sources.Strings = (
     '..\src\resource.d'
