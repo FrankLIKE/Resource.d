@@ -117,7 +117,7 @@ private void decodeb64(size_t resIndex, ref ubyte[] dest){
     dest = Base64.decode(resource_txt[resIndex]);
 }
 // cf. with z85_d for more information.
-private ubyte[] Z85_decode (char[] input)
+private ubyte[] Z85_decode (in char[] input)
 {
     ///  Maps base 85 to base 256
     static immutable ubyte[96] decoder = [

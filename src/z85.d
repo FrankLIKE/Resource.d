@@ -102,7 +102,7 @@ body
  * It automatically handles the tail added to grant the 4/5 i/o ratio,
  * as described in Z85_endcode()
  */
-ubyte[] Z85_decode (in char[] input)
+ubyte[] Z85_decode(in char[] input)
 in
 {
     assert(input.length % 5 == 0);

@@ -9,22 +9,23 @@ import utils;
 
 /**
  * describes the encoding algorithm of a resource.
- *  - safety: only raw is unsafe: if encoding/decoding fails then the program or resman crashes/raises an exception.
- *  - padding: the encoder can add a few chars (up to 2 for b64, up to 3 for z85)
- *  - average yield: from best to worst: utf8 (1/1), z85 (4/5), b64 (3/4), b16 (1/2).
- *  - usage: raw should only be used for strings, other encoders can be used for everything.
+ * An encoder is actually a binary-to-text converter. The result has to be readable as a string in a D source file.
+ *  - safeness: only raw is unsafe: the strings can contain invalid UTF-8 chars.
+ *  - padding: the encoder can add a few chars (up to 2 for base64, up to 7 for Z85), this explains the "approximate" qualification of the yield.
+ *  - approximate yield: from best to worst, (input_bytes/output_chars ratio): raw (1/1), z85 (4/5), b64 (3/4), b16 (1/2).
+ *  - usage: raw should only be used for ASCII, ANSI or UTF-8 strings, other encoders can be used for everything.
  */
 enum ResEncoding {
-    raw,    /// encode the raw data to an utf8 string.
+    raw,    /// cast the raw data as an utf8 string.
     base16, /// encode as an hexadeciaml representation.
     base64, /// encode as a base64 representation.
-    z85     /// encode as a base85 representation (ascii chars only),
+    z85     /// encode as a z85 representation.
 };
 
 /**
  * Resource item.
  * The resource properties and the encoded form are generated in the constructor.
- * The two 32 bit digesst are used for checking "data integrity", not for "security".
+ * The two 32 bit digests are used to check "data integrity", not for "security".
  */
 struct ResItem{
     private:
@@ -49,14 +50,14 @@ struct ResItem{
             }
         }
 
-        /// encode _resRawData to an UTF8 string
+        /// encodes _resRawData to an UTF8 string
         bool encodeRaw(){
             scope(failure) return false;
             _resTxtData = (cast(char[])_resRawData).dup;
             return true;
         }
 
-        /// encode _resRawData to a hex string
+        /// encodes _resRawData to a hex string
         bool encodeb16(){
             scope(failure) return false;
             foreach(b; _resRawData)
@@ -66,7 +67,7 @@ struct ResItem{
             return true;
         }
 
-        /// encode _resRawData to a base64 string
+        /// encodes _resRawData to a base64 string
         bool encodeb64(){
             import std.base64;
             scope(failure) return false;
@@ -74,7 +75,7 @@ struct ResItem{
             return true;
         }
 
-        /// encode _resRawData to a Z85 string
+        /// encodes _resRawData to a Z85 string
         bool encodez85(){
             import z85;
             scope(failure) return false;
@@ -116,8 +117,6 @@ struct ResItem{
             ehash.put(cast(ubyte[])_resTxtData);
             _encodedSum = crc322uint(ehash.finish);
         }
-
-        ~this(){}
 
         /// returns the resource encoded as a string.
         char[] encoded(){return _resTxtData;}
