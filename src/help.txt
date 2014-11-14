@@ -1,11 +1,24 @@
-+-------------------------------------------------------+
-| RESOURCE.D - resource encoder & manager               |
-+-------------------------------------------------------+
-| -h --help..........: displays this message.           |
-| --fraw=file;file...: list of resource, utf8 encoded.  |
-| --fb16=file;file...: list of resource, base16 encoded.|
-| --fb64=file;file...: list of resource, base64 encoded.|
-| --fz85=file;file...: list of resource, base85 encoded.|
-| --of=file..........: output filename.                 | 
-| --om=the.module....: output qualified module name.    |
-+-------------------------------------------------------+
++---------------------------------------------------------+
+| RESOURCE.D - resource encoder & manager                 |
++---------------------------------------------------------+
+| -h --help............: displays this message.           |
++---------------------------------------------------------+
+| --of=file............: output filename.                 |
+| --om=the.module......: output qualified module name.    |
++---------------------------------------------------------+
+| --fraw=file;file.....: files, content is utf8 encoded.  |
+| --fb16=file;file.....:       "           base16   "     |
+| --fb64=file;file.....:       "           base64   "     |
+| --fz85=file;file.....:       "           base85   "     |
++---------------------------------------------------------+
+| --draw=folder;folder.: folders entries are utf8 encoded.|
+| --db16=folder;folder.:       "             base16 "     |
+| --db64=folder;folder.:       "             base64 "     |
+| --dz85=folder;folder.:       "             base85 "     |
++---------------------------------------------------------+
+| --itms=<itm>;<itm>...: itm are encoded according to...  |
+| <itm>=<f>%<i>%<e>....: itm is formed of 3 members       |
+| <f>=filename.........: file whose content is to encode  |
+| <i>=identifier.......: a string used to identify the res|
+| <e>=encoder kind.....: raw, base16, base64 or z85       |
++---------------------------------------------------------+

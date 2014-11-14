@@ -5,36 +5,23 @@ object CurrentProject: TCEProject
       name = 'debug'
       debugingOptions.debug = True
       debugingOptions.addDInformations = True
+      messagesOptions.showColumnsNumber = True
       outputOptions.noBoundsCheck = False
       outputOptions.boundsCheck = onAlways
-      pathsOptions.outputFilename = '<CPP>..\bin\resman.d.exe'
+      pathsOptions.outputFilename = '<CPP>..\bin\resource.d.exe'
       pathsOptions.Imports.Strings = (
         '<CPP>..\src\'
       )
       preBuildProcess.options = []
-      preBuildProcess.parameters.Strings = (
-        'dgdgd'
-        'ghdfgh'
-      )
       preBuildProcess.showWindow = swoNone
       postBuildProcess.options = []
-      postBuildProcess.parameters.Strings = (
-        'dgdgd'
-        'ghdfgh'
-      )
       postBuildProcess.showWindow = swoNone
-      runOptions.options = [poNewConsole]
-      runOptions.parameters.Strings = (
-        'dgdgd'
-        'ghdfgh'
-        'dgfsdfg'
-        'sgfsdgfs'
-        'sdfgdgf'
-      )
-      runOptions.showWindow = swoShow
+      runOptions.options = [poUsePipes, poStderrToOutPut]
+      runOptions.showWindow = swoNone
     end  
     item
       name = 'unittest'
+      messagesOptions.showColumnsNumber = True
       outputOptions.noBoundsCheck = False
       outputOptions.boundsCheck = onAlways
       outputOptions.unittest = True
@@ -47,6 +34,7 @@ object CurrentProject: TCEProject
     end  
     item
       name = 'release'
+      messagesOptions.showColumnsNumber = True
       outputOptions.inlining = True
       outputOptions.noBoundsCheck = False
       outputOptions.boundsCheck = offAlways
@@ -56,11 +44,8 @@ object CurrentProject: TCEProject
       preBuildProcess.showWindow = swoNone
       postBuildProcess.options = []
       postBuildProcess.showWindow = swoNone
-      runOptions.options = [poNewConsole]
-      runOptions.parameters.Strings = (
-        'zerzrzr'
-      )
-      runOptions.showWindow = swoShow
+      runOptions.options = []
+      runOptions.showWindow = swoNone
     end>
   Sources.Strings = (
     '..\src\resource.d'

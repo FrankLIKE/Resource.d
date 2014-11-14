@@ -1,4 +1,4 @@
-module resman;
+module resource;
 
 import core.exception;
 import std.stdio, std.getopt;
@@ -61,12 +61,24 @@ struct ResItem{
             return true;
         }
 
+
+        /// returns the hexadecimal representation of a ubyte.
+        char[2] ubyte2Hex(ubyte value){
+            // because to!string(int, radix) strips the leading 0 off.
+            static const hexDigits = "0123456789ABCDEF";
+            char[2] result;
+            result[1] = hexDigits[((value & 0x0F)     )];
+            result[0] = hexDigits[((value & 0xF0) >> 4)];
+            return result;
+        }
+
         /// encode _resRawData to a hex string
         bool encodeb16(){
             scope(failure) return false;
-            foreach(ubyte b; _resRawData)
-                this._resTxtData ~= to!string(b, 16);
-            assert(_resTxtData.length == _resRawData.length * 2);
+            foreach(b; _resRawData)
+                this._resTxtData ~= ubyte2Hex(b);
+            assert(_resTxtData.length == _resRawData.length * 2,
+                "b16 representation length mismatches");
             return true;
         }
 
@@ -87,7 +99,8 @@ struct ResItem{
             dec.encode(&enc);
             _resTxtData = enc.data;
             _padding = cast(uint32) dec.tail;
-            assert(_resTxtData.length == (_resRawData.length + _padding) * 5 / 4);
+            assert(_resTxtData.length == (_resRawData.length + _padding) * 5 / 4,
+                "z85 representation length mismatches");
             return true;
         }
 
@@ -161,48 +174,51 @@ struct ResItem{
         }
 }
 
-/*
-    generate a template with no resource, allow to compile/develop with a valid
+/*  Options
+    =======
+
+    (generates a template with no resource, allow to compile/develop with a valid
     import while resources are not yet ready. at least --of must also be specified.
-    -t|--tmp
-
-    raw res, using filename as ident.
-    --fraw=file,file,file
-
-    b16 res, using filename as ident.
-    --fb16=file,file,file
-
-    b64 res, using filename as ident.
-    --fb64=file,file,file
-
-    z85 res, using filename as ident.
-    --fz85=file,file,file
-
-    raw res, using filenames in each dir as ident.
-    --draw=directory,directory
-    --db16=directory,directory
-    -- etc..
+    -t|--tmp)
 
     some fully described items
     --itms=<itm format>;<itm format>
         itm format: <fname>%<ident>%<enc>
             fname: a filename
             ident: an identifier
-            enc: either raw, b16, b64, z85 or auto
-                auto: lets the program guess the best format.
+            enc: either raw, base16, base64, z85
+
+    raw/b16,b64,z85 res, using filename as ident.
+    --fraw=file;file;file
+    --fb16=file;file;file
+    --fb64=file;file;file
+    --fz85=file;file;file
 
     output filename
-    --of=relative or absolute fname
+    --of=<relative or absolute fname>
 
-    output module
-    --om=qualified.module.name
+    output module, optional
+    --om=<qualified.module.name>
+
+    general help
+    --help|-h
+
+    raw/b16,b64,z85 res, using filenames in each dir as ident, non recursive.
+    --draw=directory;directory
+    --db16=directory;directory
+    --db64=directory;directory
+    --dz85=directory;directory
 */
 
 
 void main(string[] args){
 
     // resources to write in the module
-    ResItem[] resItems;
+    ResItem*[] resItems;
+    scope(exit){
+    foreach(i; 0 .. resItems.length)
+        delete resItems[i];
+    }
 
     // options holders
     bool wantHelp;
@@ -225,29 +241,51 @@ void main(string[] args){
     }
 
     // get files to be encoded, without ident, by encoder kind.
-    void getFilesToEncode(string aOpt, out string[] aHolder)
+    void getFilesToEncode(string aOpt, ref string[] aHolder)
     {
+        opt = opt.init;
         getopt(args, config.passThrough, aOpt, &opt);
         foreach(elem; split(opt, ';'))
             aHolder ~= elem;
-        opt = opt.init;
-        writeln(aHolder);
-        stdout.flush;
     }
     getFilesToEncode("fraw", fraws);
     getFilesToEncode("fb16", fb16s);
     getFilesToEncode("fb64", fb64s);
     getFilesToEncode("fz85", fz85s);
 
-    // prepares the resources properties and their encoded form
-    foreach(fname; fraws)
-        resItems ~= * new ResItem(fname, ResEncoding.raw);
-    foreach(fname; fb16s)
-        resItems ~= * new ResItem(fname, ResEncoding.base16);
-    foreach(fname; fb64s)
-        resItems ~= * new ResItem(fname, ResEncoding.base64);
-    foreach(fname; fz85s)
-        resItems ~= * new ResItem(fname, ResEncoding.z85);
+    // get folder of files to be be encoded, without ident, by encoder kind.
+    void getFoldersToEncode(string foldOpt, ref string[] aHolder)
+    {
+        opt = opt.init;
+        getopt(args, config.passThrough, foldOpt, &opt);
+        foreach(foldname; split(opt, ';'))
+            foreach(fname; dirEntries(foldname, SpanMode.shallow))
+                aHolder ~= fname;
+    }
+    getFoldersToEncode("draw", fraws);
+    getFoldersToEncode("db16", fb16s);
+    getFoldersToEncode("db64", fb64s);
+    getFoldersToEncode("dz85", fz85s);
+
+
+    // get fully described items
+    opt = opt.init;
+    getopt(args, config.passThrough, "itms", &opt);
+    foreach(itm; split(opt, ';')){
+        string[] elems = split(itm, '%');
+        assert(elems.length == 3);
+        auto enc = to!ResEncoding(elems[2]);
+        resItems ~= new ResItem(elems[0], enc, elems[1]);
+    }
+
+    if (!resItems.length)
+        if (!fraws.length)
+            if (!fb16s.length)
+                if (!fb64s.length)
+                    if (!fz85s.length){
+        writeln("nothing to encode");
+        return;
+    }
 
     // gets options for the module
     getopt(args, config.passThrough, "of", &outputFname, "om", &moduleName);
@@ -255,7 +293,6 @@ void main(string[] args){
         throw new Exception("an output filename must be specified with --of");
     if (moduleName == "")
         moduleName = outputFname.baseName.stripExtension;
-
     // prompt for overwrite
     if (outputFname.exists){
         size_t i;
@@ -280,6 +317,18 @@ void main(string[] args){
     }
     outputFname.append(format("module %s;", moduleName));
 
+
+    // prepares the resources properties and their encoded form
+    foreach(fname; fraws)
+        resItems ~= new ResItem(fname, ResEncoding.raw);
+    foreach(fname; fb16s)
+        resItems ~= new ResItem(fname, ResEncoding.base16);
+    foreach(fname; fb64s)
+        resItems ~= new ResItem(fname, ResEncoding.base64);
+    foreach(fname; fz85s)
+        resItems ~= new ResItem(fname, ResEncoding.z85);
+
+
     // writes the resource representations to the module
     outputFname.append("\r\n\r\n");
     outputFname.append("static const resource_txt = [");
@@ -298,7 +347,7 @@ void main(string[] args){
     outputFname.append("\r\n\r\n");
     outputFname.append("static const resource_enc = [");
     for (auto i = 0; i < resItems.length -1; i++)
-        outputFname.append(format("\r\n\t %s.%s ,", ResEncoding.stringof, resItems[i].encoding));
+        outputFname.append(format("\r\n\t %s.%s,", ResEncoding.stringof, resItems[i].encoding));
     outputFname.append(format("\r\n\t %s.%s \r\n];", ResEncoding.stringof, resItems[$-1].encoding));
 
     // writes the resources initial sums to the module
@@ -318,14 +367,13 @@ void main(string[] args){
     // writes the resources padding to the module
     outputFname.append("\r\n\r\n");
     outputFname.append("static const resource_pad = [");
-    for (auto i = 0; i < resItems.length -1; i++)
+    if (resItems.length > 1) for (auto i = 0; i < resItems.length -1; i++)
         outputFname.append(format("\r\n\t" ~ "%d" ~ ",", resItems[i].padding));
     outputFname.append(format("\r\n\t" ~ "%d" ~ "\r\n];", resItems[$-1].padding));
 
     // appends the templated resource accessors
     outputFname.append("\r\n\r\n");
     outputFname.append(import("accessors.d"));
-
 
     writeln("resource file written, press any key to exit.");
     readln;

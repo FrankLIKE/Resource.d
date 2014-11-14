@@ -1,3 +1,35 @@
+module project.resources;
+
+static const resource_txt = [
+	"f!$Kwh8WAMauqzug+*:yi3pjth-J/NgbQ)Eh8b7h",
+	"QWVuZWFuIG1hdXJpcyB2ZWxpdCwgaWFjdWxpcyB1dCBlbmltIGV0LCBpbXBlcmRpZXQgcmhvbmN1cyBpcHN1bS4gQWxpcXVhbSBlZ2V0IGRvbG9yIHZlbCBvcmNpIHBsYWNlcmF0IGZyaW5naWxsYSBpbiBldSBsb3JlbS4gQ3JhcyBhdCBjb21tb2RvIGZlbGlzLiBDcmFzIHZlbGl0IHR1cnBpcywgZmF1Y2lidXMgcXVpcyBoZW5kcmVyaXQgbm9uLCBldWlzbW9kIHZpdGFlIGxhY3VzLiBDcmFzIHBvcnR0aXRvciB0ZW1wdXMgdmVzdGlidWx1bS4gTW9yYmkgbWF0dGlzIG5lcXVlIHF1aXMgbGVjdHVzIHBlbGxlbnRlc3F1ZSwgYWMgdmVoaWN1bGEgbGVjdHVzIGFjY3Vtc2FuLiBRdWlzcXVlIHRlbXBvciBtYWduYSB2ZWwgYWNjdW1zYW4gbGFjaW5pYS4gRXRpYW0gYWMgbGVvIG9kaW8uIE5hbSBzZWQgbWFzc2EgZXUgc2FwaWVuIHZ1bHB1dGF0ZSBmZXVnaWF0IGV1IGVnZXQgZGlhbS4gVmVzdGlidWx1bSBpZCBlc3QgaWQgZWxpdCB2YXJpdXMgZmluaWJ1cyBhdCBhdCBwdXJ1cy4gQWVuZWFuIG9ybmFyZSBmZWxpcyBlZ2V0IGxpYmVybyBldWlzbW9kLCBpbiBmZXVnaWF0IGxvcmVtIGxhY2luaWEuIFBoYXNlbGx1cyBlZmZpY2l0dXIgYXQgZmVsaXMgcXVpcyB0aW5jaWR1bnQu"
+];
+
+static const resource_idt = [
+	"resource_1",
+	"resource_2"
+];
+
+static const resource_enc = [
+	 ResEncoding.z85,
+	 ResEncoding.base64 
+];
+
+static const resource_sumi = [
+	832533648,
+	1951281988
+];
+
+static const resource_sume = [
+	77251344,
+	706794208
+];
+
+static const resource_pad = [
+	2,
+	0
+];
+
 /// enumerates the supported encoder kinds.
 public enum ResEncoding {
     raw, base16, base64, z85
