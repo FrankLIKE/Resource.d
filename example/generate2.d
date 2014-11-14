@@ -23,14 +23,14 @@ static const resource_idt = [
 ];
 
 static const resource_enc = [
-	 ResEncoding.base16,
-	 ResEncoding.base16,
-	 ResEncoding.base16,
-	 ResEncoding.base16,
-	 ResEncoding.base16,
-	 ResEncoding.base16,
-	 ResEncoding.base16,
-	 ResEncoding.base16 
+	ResEncoding.base16,
+	ResEncoding.base16,
+	ResEncoding.base16,
+	ResEncoding.base16,
+	ResEncoding.base16,
+	ResEncoding.base16,
+	ResEncoding.base16,
+	ResEncoding.base16 
 ];
 
 static const resource_sumi = [
@@ -53,17 +53,6 @@ static const resource_sume = [
 	469500517,
 	1406068463,
 	143152600
-];
-
-static const resource_pad = [
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0
 ];
 
 /// enumerates the supported encoder kinds.
@@ -132,8 +121,56 @@ private void decodeb64(size_t resIndex, ref ubyte[] dest){
     import std.base64;
     dest = Base64.decode(resource_txt[resIndex]);
 }
+// cf. with z85_d for more information.
+private ubyte[] Z85_decode (char[] input)
+{
+    ///  Maps base 85 to base 256
+    static immutable ubyte[96] decoder = [
+        0x00, 0x44, 0x00, 0x54, 0x53, 0x52, 0x48, 0x00,
+        0x4B, 0x4C, 0x46, 0x41, 0x00, 0x3F, 0x3E, 0x45,
+        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+        0x08, 0x09, 0x40, 0x00, 0x49, 0x42, 0x4A, 0x47,
+        0x51, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2A,
+        0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30, 0x31, 0x32,
+        0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A,
+        0x3B, 0x3C, 0x3D, 0x4D, 0x00, 0x4E, 0x43, 0x00,
+        0x00, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10,
+        0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+        0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20,
+        0x21, 0x22, 0x23, 0x4F, 0x00, 0x50, 0x00, 0x00
+    ];
+
+    // reference implementation
+    size_t decoded_size = input.length * 4 / 5;
+    ubyte[] decoded;
+    decoded.length = decoded_size;
+    uint byte_nbr;
+    uint char_nbr;
+    uint value;
+    while (char_nbr < input.length)
+    {
+        value = value * 85 + decoder [cast(ubyte) input[char_nbr++] - 32];
+        if (char_nbr % 5 == 0)
+        {
+            uint divisor = 256 * 256 * 256;
+            while (divisor)
+            {
+                decoded[byte_nbr++] = value / divisor % 256;
+                divisor /= 256;
+            }
+            value = 0;
+        }
+    }
+    assert (byte_nbr == decoded_size);
+
+    // removes the tail things.
+    ubyte added = decoded[$-4];
+    decoded = decoded[0..$- (4 + added)];
+
+    return decoded;
+}
 
 private void decodez85(size_t resIndex, ref ubyte[] dest){
-    // problem: z85 is not std
+    dest = Z85_decode(resource_txt[resIndex]);
 }
 

@@ -7,7 +7,7 @@ static const resource_txt = [
 	"41656E65616E206D61757269732076656C69742C20696163756C697320757420656E696D2065742C20696D706572646965742072686F6E63757320697073756D2E20416C697175616D206567657420646F6C6F722076656C206F72636920706C616365726174206672696E67696C6C6120696E206575206C6F72656D2E204372617320617420636F6D6D6F646F2066656C69732E20437261732076656C6974207475727069732C20666175636962757320717569732068656E647265726974206E6F6E2C20657569736D6F64207669746165206C616375732E204372617320706F72747469746F722074656D70757320766573746962756C756D2E204D6F726269206D6174746973206E657175652071756973206C65637475732070656C6C656E7465737175652C206163207665686963756C61206C656374757320616363756D73616E2E20517569737175652074656D706F72206D61676E612076656C20616363756D73616E206C6163696E69612E20457469616D206163206C656F206F64696F2E204E616D20736564206D617373612065752073617069656E2076756C70757461746520666575676961742065752065676574206469616D2E20566573746962756C756D2069642065737420696420656C6974207661726975732066696E696275732061742061742070757275732E2041656E65616E206F726E6172652066656C69732065676574206C696265726F20657569736D6F642C20696E2066657567696174206C6F72656D206C6163696E69612E2050686173656C6C7573206566666963697475722061742066656C697320717569732074696E636964756E742E",
 	"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAJhJREFUeNpi/P//PwMlgAVE3Lt37wCQsidR70ElJSUHsAFAV9iTYbk93AX//v2jzAt///6FC9TV1YHppqYmFIW4xDEM+PPnDwO6GD5xDC/AFKJ7C5c4IygaL1y4QFZcGhgYMLIgm06VQCTLAGR/FRcX49XQ29tLXCzgAlhjAVmwu7ubdAMoTolAA0CZyYFEvQfg6YASABBgAESXY0hyXW4UAAAAAElFTkSuQmCC",
 	"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAPJJREFUeNqkk00OREAQhV9PbOzsCeEEDkC4h6NILJzEUUxYWXEBImFvZ+NndCc6hpgJKmmdfKpKv1eazPOMJyHQR1mW8bI5F2vfhmG4rMFyCufGxx1+gmmankkYx5GDIAjYHobhV+IZPzQYhgF79osfJKyJe1lnnNAx5nl+a5amaRJh2/1OvFZddGVZBt/3URQFZ+uijL6jOSs7eCCKIvq+RxRF0DQNiqIw3jQN6roGIYTlbH1gHqRpyj2oqgpJkqBtW3Rdx5gkSZBlGbZtQ9d1XmxZFjmMUVVVeJ53qvnvGG/9iUsDepnci7Ux9+BJfAQYAA4ymWUAhzHmAAAAAElFTkSuQmCC",
-	"Q?Ot^{tpZw/HyUEpI0n8!v9<hV#7N>ycZp8ytdf{!mvo>HnqH@o51P6T.QF6/sCIEmpY$7Q{-)jX2*O]Q0>F:ysDDNQTVT^TXkKJoj:{NwO72j!Ly6Ln[yE$m8&//-)!KooAk4)"
+	"Q?Ot^{tpZw/HyUEpI0n8!v9<hV#7N>ycZp8ytdf{!mvo>HnqH@o51P6T.QF6/sCIEmpY$7Q{-)jX2*O]Q0>F:ysDDNQTVT^TXkKJoj:{NwO72j!Ly6Ln[yE$m8&//-)!KooAk4)0@@r3"
 ];
 
 static const resource_idt = [
@@ -21,13 +21,13 @@ static const resource_idt = [
 ];
 
 static const resource_enc = [
-	 ResEncoding.raw,
-	 ResEncoding.raw,
-	 ResEncoding.base16,
-	 ResEncoding.base16,
-	 ResEncoding.base64,
-	 ResEncoding.base64,
-	 ResEncoding.z85 
+	ResEncoding.raw,
+	ResEncoding.raw,
+	ResEncoding.base16,
+	ResEncoding.base16,
+	ResEncoding.base64,
+	ResEncoding.base64,
+	ResEncoding.z85 
 ];
 
 static const resource_sumi = [
@@ -47,17 +47,7 @@ static const resource_sume = [
 	2518604207,
 	2005268032,
 	4283104252,
-	3503196859
-];
-
-static const resource_pad = [
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	3
+	1307549914
 ];
 
 /// enumerates the supported encoder kinds.
@@ -126,8 +116,56 @@ private void decodeb64(size_t resIndex, ref ubyte[] dest){
     import std.base64;
     dest = Base64.decode(resource_txt[resIndex]);
 }
+// cf. with z85_d for more information.
+private ubyte[] Z85_decode (char[] input)
+{
+    ///  Maps base 85 to base 256
+    static immutable ubyte[96] decoder = [
+        0x00, 0x44, 0x00, 0x54, 0x53, 0x52, 0x48, 0x00,
+        0x4B, 0x4C, 0x46, 0x41, 0x00, 0x3F, 0x3E, 0x45,
+        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+        0x08, 0x09, 0x40, 0x00, 0x49, 0x42, 0x4A, 0x47,
+        0x51, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2A,
+        0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30, 0x31, 0x32,
+        0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A,
+        0x3B, 0x3C, 0x3D, 0x4D, 0x00, 0x4E, 0x43, 0x00,
+        0x00, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10,
+        0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+        0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20,
+        0x21, 0x22, 0x23, 0x4F, 0x00, 0x50, 0x00, 0x00
+    ];
+
+    // reference implementation
+    size_t decoded_size = input.length * 4 / 5;
+    ubyte[] decoded;
+    decoded.length = decoded_size;
+    uint byte_nbr;
+    uint char_nbr;
+    uint value;
+    while (char_nbr < input.length)
+    {
+        value = value * 85 + decoder [cast(ubyte) input[char_nbr++] - 32];
+        if (char_nbr % 5 == 0)
+        {
+            uint divisor = 256 * 256 * 256;
+            while (divisor)
+            {
+                decoded[byte_nbr++] = value / divisor % 256;
+                divisor /= 256;
+            }
+            value = 0;
+        }
+    }
+    assert (byte_nbr == decoded_size);
+
+    // removes the tail things.
+    ubyte added = decoded[$-4];
+    decoded = decoded[0..$- (4 + added)];
+
+    return decoded;
+}
 
 private void decodez85(size_t resIndex, ref ubyte[] dest){
-    // problem: z85 is not std
+    dest = Z85_decode(resource_txt[resIndex]);
 }
 

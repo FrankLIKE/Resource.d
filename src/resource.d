@@ -1,183 +1,22 @@
 module resource;
 
 import core.exception;
+//
 import std.stdio, std.getopt;
 import std.file, std.path;
 import std.algorithm, std.conv, std.array;
 import std.string: format;
-
-alias uint32 = uint;
+//
+import utils, item;
 
 /// resource strings are splitted in multpiles lines
-static uint32 resColumn = 100;
+static uint resColumn = 100;
 
-/**
- * describes the encoding algorithm of a resource.
- *  - safety: only raw is unsafe: if encoding/decoding fails then the program or resman crashes/raises an exception.
- *  - padding: the encoder can add a few chars (up to 2 for b64, up to 3 for z85)
- *  - average yield: from best to worst: utf8 (1/1), z85 (4/5), b64 (3/4), b16 (1/2).
- *  - usage: raw should only be used for strings, other encoders can be used for everything.
- */
-enum ResEncoding {
-    raw,    /// encode the raw data to an utf8 string.
-    base16, /// encode as an hexadeciaml representation.
-    base64, /// encode as a base64 representation.
-    z85     /// encode as a base85 representation (ascii chars only),
-};
-
-/**
- * Resource item.
- * The resource properties and the encoded form are generated in the constructor.
- */
-struct ResItem{
-    private:
-
-        static const resFileMsg = "resource file '%s' ";
-        ResEncoding _resEncoding;
-        string _resIdentifier;
-        char[] _resTxtData;
-        ubyte[] _resRawData;
-        ubyte[4] _initialSum;
-        ubyte[4] _encodedSum;
-        uint32 _padding;
-
-        bool encodeDispatcher(){
-            final switch(this._resEncoding){
-                case ResEncoding.raw:
-                    return encodeRaw();
-                case ResEncoding.base16:
-                    return encodeb16();
-                case ResEncoding.base64:
-                    return encodeb64();
-                case ResEncoding.z85:
-                    return encodez85();
-            }
-        }
-
-        /// encode _resRawData to an UTF8 string
-        bool encodeRaw(){
-            scope(failure) return false;
-            _resTxtData = (cast(char[])_resRawData).dup;
-            return true;
-        }
-
-
-        /// returns the hexadecimal representation of a ubyte.
-        char[2] ubyte2Hex(ubyte value){
-            // because to!string(int, radix) strips the leading 0 off.
-            static const hexDigits = "0123456789ABCDEF";
-            char[2] result;
-            result[1] = hexDigits[((value & 0x0F)     )];
-            result[0] = hexDigits[((value & 0xF0) >> 4)];
-            return result;
-        }
-
-        /// encode _resRawData to a hex string
-        bool encodeb16(){
-            scope(failure) return false;
-            foreach(b; _resRawData)
-                this._resTxtData ~= ubyte2Hex(b);
-            assert(_resTxtData.length == _resRawData.length * 2,
-                "b16 representation length mismatches");
-            return true;
-        }
-
-        /// encode _resRawData to a base64 string
-        bool encodeb64(){
-            import std.base64;
-            scope(failure) return false;
-            _resTxtData = Base64.encode(_resRawData);
-            return true;
-        }
-
-        /// encode _resRawData to a Z85 string
-        bool encodez85(){
-            import z85;
-            scope(failure) return false;
-            auto dec = Z85Dec(_resRawData);
-            Z85Enc enc;
-            dec.encode(&enc);
-            _resTxtData = enc.data;
-            _padding = cast(uint32) dec.tail;
-            assert(_resTxtData.length == (_resRawData.length + _padding) * 5 / 4,
-                "z85 representation length mismatches");
-            return true;
-        }
-
-    public:
-
-        /// creates and encodes a new resource item.
-        this(string resFile, ResEncoding resEnc, string resIdent = "")
-        {
-            this._resEncoding = resEnc;
-
-            // load the raw content
-            if (!resFile.exists)
-                throw new Exception(format(resFileMsg ~ "does not exist", resFile));
-            else
-                _resRawData = cast(ubyte[])std.file.read(resFile);
-            if (!_resRawData.length)
-                throw new Exception(format(resFileMsg ~ "is empty", resFile));
-
-            import std.digest.crc;
-            CRC32 ihash;
-            ihash.put(_resRawData);
-            _initialSum = ihash.finish;
-
-            // sets the resource identifier to the res filename if param is empty
-            this._resIdentifier = resIdent;
-            if (this._resIdentifier == "")
-                this._resIdentifier = resFile.baseName.stripExtension;
-
-            if (!encodeDispatcher)
-                throw new Exception(format(resFileMsg ~ "encoding failed", resFile));
-            this._resRawData.length = 0;
-            CRC32 ehash;
-            ehash.put(cast(ubyte[])_resTxtData);
-            _encodedSum = ehash.finish;
-        }
-
-        ~this(){}
-
-        /// returns the count, in byte, of additional data added to complete encoding
-        uint32 padding(){return _padding;}
-
-        /// returns the resource encoded as a string.
-        char[] encoded(){return _resTxtData;}
-
-        /// returns the resource identifier.
-        string identifier(){return _resIdentifier;}
-
-        /// returns the resource encoding kind.
-        ResEncoding encoding(){return _resEncoding;}
-
-        /// returns the signature of the original data.
-        uint32 initialSum(){
-            uint32 result;
-            ubyte* ptr = cast(ubyte*) &result;
-            version(BigEndian)
-                foreach(i; 0..4) * (ptr + i) = _initialSum[i];
-            else
-                foreach(i; 0..4) * (ptr + i) = _initialSum[3-i];
-            return result;
-        }
-
-        /// returns the signature of the encoded data.
-        uint32 encodedSum(){
-            uint32 result;
-            ubyte* ptr = cast(ubyte*) &result;
-            version(BigEndian)
-                foreach(i; 0..4) * (ptr + i) = _encodedSum[i];
-            else
-                foreach(i; 0..4) * (ptr + i) = _encodedSum[3-i];
-            return result;
-        }
-}
 
 /*  Options
     =======
 
-    (generates a template with no resource, allow to compile/develop with a valid
+    (generates a template with empty resources, allow to compile/develop with a valid
     import while resources are not yet ready. at least --of must also be specified.
     -t|--tmp)
 
@@ -209,7 +48,6 @@ struct ResItem{
     --db64=directory;directory
     --dz85=directory;directory
 */
-
 
 void main(string[] args){
 
@@ -266,7 +104,6 @@ void main(string[] args){
     getFoldersToEncode("db16", fb16s);
     getFoldersToEncode("db64", fb64s);
     getFoldersToEncode("dz85", fz85s);
-
 
     // get fully described items
     opt = opt.init;
@@ -328,7 +165,6 @@ void main(string[] args){
     foreach(fname; fz85s)
         resItems ~= new ResItem(fname, ResEncoding.z85);
 
-
     // writes the resource representations to the module
     outputFname.append("\r\n\r\n");
     outputFname.append("static const resource_txt = [");
@@ -347,8 +183,8 @@ void main(string[] args){
     outputFname.append("\r\n\r\n");
     outputFname.append("static const resource_enc = [");
     for (auto i = 0; i < resItems.length -1; i++)
-        outputFname.append(format("\r\n\t %s.%s,", ResEncoding.stringof, resItems[i].encoding));
-    outputFname.append(format("\r\n\t %s.%s \r\n];", ResEncoding.stringof, resItems[$-1].encoding));
+        outputFname.append(format("\r\n\t%s.%s,", ResEncoding.stringof, resItems[i].encoding));
+    outputFname.append(format("\r\n\t%s.%s \r\n];", ResEncoding.stringof, resItems[$-1].encoding));
 
     // writes the resources initial sums to the module
     outputFname.append("\r\n\r\n");
@@ -364,18 +200,10 @@ void main(string[] args){
         outputFname.append(format("\r\n\t" ~ "%.d" ~ ",", resItems[i].encodedSum));
     outputFname.append(format("\r\n\t" ~ "%.d" ~ "\r\n];", resItems[$-1].encodedSum));
 
-    // writes the resources padding to the module
-    outputFname.append("\r\n\r\n");
-    outputFname.append("static const resource_pad = [");
-    if (resItems.length > 1) for (auto i = 0; i < resItems.length -1; i++)
-        outputFname.append(format("\r\n\t" ~ "%d" ~ ",", resItems[i].padding));
-    outputFname.append(format("\r\n\t" ~ "%d" ~ "\r\n];", resItems[$-1].padding));
-
-    // appends the templated resource accessors
+    // appends the resource accessors template code.
     outputFname.append("\r\n\r\n");
     outputFname.append(import("accessors.d"));
 
     writeln("resource file written, press any key to exit.");
     readln;
 }
-
