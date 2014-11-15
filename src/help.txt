@@ -1,7 +1,6 @@
-+---------------------------------------------------------+
-| RESOURCE.D - resource encoder & manager                 |
-+---------------------------------------------------------+
 | -h --help............: displays this message.           |
+| -m --main............: adds an empty main().            |
+| -v --verbose.........: verbose output.                  |
 +---------------------------------------------------------+
 | --of=file............: output filename.                 |
 | --om=the.module......: output qualified module name.    |

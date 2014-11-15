@@ -174,3 +174,4 @@ private void decodez85(size_t resIndex, ref ubyte[] dest){
     dest = Z85_decode(resource_txt[resIndex]);
 }
 
+void main(){}

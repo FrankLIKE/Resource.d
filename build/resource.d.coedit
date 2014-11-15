@@ -24,6 +24,7 @@ object CurrentProject: TCEProject
         '--fz85=..\res\res_rnd1.dat'
         '--of=generate1.d'
         '--om=project.resources'
+        '-v'
       )
       runOptions.showWindow = swoShow
     end>

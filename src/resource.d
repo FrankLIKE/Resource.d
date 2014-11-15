@@ -42,13 +42,18 @@ static uint resColumn = 100;
     general help
     --help|-h
 
+    add a main() to the resource file, to test quickly its validity
+    --main|-m
+
+    verbose
+    --verbose|-v
+
     raw/b16,b64,z85 res, using filenames in each dir as ident, non recursive.
     --draw=directory;directory
     --db16=directory;directory
     --db64=directory;directory
     --dz85=directory;directory
 */
-
 void main(string[] args){
 
     // resources to write in the module
@@ -59,8 +64,9 @@ void main(string[] args){
     }
 
     // options holders
-    bool wantHelp;
-    static string helptxt = import("help.txt");
+    bool wantHelp, addMain, verbose;
+    static string header = import("header.txt");
+    static string helptxt= import("help.txt");
     string outputFname;
     string moduleName;
     string opt;
@@ -69,6 +75,7 @@ void main(string[] args){
     string[] fb64s;
     string[] fz85s;
 
+    writeln(header);
     // help display
     getopt(args, config.passThrough, "h|help", &wantHelp);
     if (wantHelp || args.length == 1){
@@ -78,13 +85,17 @@ void main(string[] args){
         return;
     }
 
+    getopt(args, config.passThrough, "v|verbose", &verbose);
+
     // get files to be encoded, without ident, by encoder kind.
     void getFilesToEncode(string aOpt, ref string[] aHolder)
     {
         opt = opt.init;
         getopt(args, config.passThrough, aOpt, &opt);
-        foreach(elem; split(opt, ';'))
+        foreach (elem; split(opt, ';')){
             aHolder ~= elem;
+            writeMessage(verbose, format("adding resource file '%s'", elem));
+        }
     }
     getFilesToEncode("fraw", fraws);
     getFilesToEncode("fb16", fb16s);
@@ -96,9 +107,13 @@ void main(string[] args){
     {
         opt = opt.init;
         getopt(args, config.passThrough, foldOpt, &opt);
-        foreach(foldname; split(opt, ';'))
-            foreach(fname; dirEntries(foldname, SpanMode.shallow))
+        foreach(foldname; split(opt, ';')){
+            writeMessage(verbose, format("processing folder '%s'", foldname));
+            foreach(fname; dirEntries(foldname, SpanMode.shallow)){
                 aHolder ~= fname;
+                writeMessage(verbose, format("adding resource file '%s'", fname));
+            }
+        }
     }
     getFoldersToEncode("draw", fraws);
     getFoldersToEncode("db16", fb16s);
@@ -108,6 +123,7 @@ void main(string[] args){
     // get fully described items
     opt = opt.init;
     getopt(args, config.passThrough, "itms", &opt);
+    writeMessage(verbose && opt.length, "creating the resources from --itms...");
     foreach(itm; split(opt, ';')){
         string[] elems = split(itm, '%');
         assert(elems.length == 3);
@@ -120,7 +136,7 @@ void main(string[] args){
             if (!fb16s.length)
                 if (!fb64s.length)
                     if (!fz85s.length){
-        writeln("nothing to encode");
+        writeMessage(true, "nothing to encode");
         return;
     }
 
@@ -134,12 +150,13 @@ void main(string[] args){
     if (outputFname.exists){
         size_t i;
         string r;
+        writeMessage(true, "\r\n");
         while(true) {
             r = r.init;
             if (i != 3)
-                writefln("'%s' already exists, press Y to overwrite or N to cancel", outputFname);
+                writeMessage(true, "the output file already exists, press Y+ENTER to overwrite or N+ENTER to quit");
             else
-                writefln("Last chance, press Y to overwrite or N to cancel, otherwise the program will exit");
+                writeMessage(true, "last chance, press Y+ENTER to overwrite otherwise the program will quit");
             stdout.flush;
             r = readln;
             ++i;
@@ -149,23 +166,29 @@ void main(string[] args){
                 return;
         }
 
-        writefln("'%s' will be overwritten.", outputFname);
+        writeMessage(true, format("'%s' will be overwritten.", outputFname));
         std.file.remove(outputFname);
     }
+    writeMessage(verbose, "writing the module name...");
     outputFname.append(format("module %s;", moduleName));
 
 
     // prepares the resources properties and their encoded form
-    foreach(fname; fraws)
+    writeMessage(verbose && fraws.length, "creating the resources from --fraw...");
+    foreach (fname; fraws)
         resItems ~= new ResItem(fname, ResEncoding.raw);
-    foreach(fname; fb16s)
+    writeMessage(verbose && fb16s.length, "creating the resources from --fbase16...");
+    foreach (fname; fb16s)
         resItems ~= new ResItem(fname, ResEncoding.base16);
-    foreach(fname; fb64s)
+    writeMessage(verbose && fb64s.length, "creating the resources from --fbase64...");
+    foreach (fname; fb64s)
         resItems ~= new ResItem(fname, ResEncoding.base64);
-    foreach(fname; fz85s)
+    writeMessage(verbose && fz85s.length, "creating the resources from --fz85...");
+    foreach (fname; fz85s)
         resItems ~= new ResItem(fname, ResEncoding.z85);
 
     // writes the resource representations to the module
+    writeMessage(verbose, "writing the resources text...");
     outputFname.append("\r\n\r\n");
     outputFname.append("static const resource_txt = [");
     foreach (i; 0 .. resItems.length -1)
@@ -175,6 +198,7 @@ void main(string[] args){
 //    outputFname.append(format("\r\n" ~ "%s];", splitConstString(resItems[$-1].encoded)));
 
     // writes the resources identifiers to the module
+    writeMessage(verbose, "writing the resources identifiers...");
     outputFname.append("\r\n\r\n");
     outputFname.append("static const resource_idt = [");
     foreach (i; 0 .. resItems.length -1)
@@ -182,6 +206,7 @@ void main(string[] args){
     outputFname.append(format("\r\n\t" ~ "\"" ~ "%s" ~ "\"" ~ "\r\n];", resItems[$-1].identifier));
 
     // writes the resources encoder kind to the module
+    writeMessage(verbose, "writing the resources kind...");
     outputFname.append("\r\n\r\n");
     outputFname.append("static const resource_enc = [");
     foreach (i; 0 .. resItems.length -1)
@@ -189,6 +214,7 @@ void main(string[] args){
     outputFname.append(format("\r\n\t%s.%s \r\n];", ResEncoding.stringof, resItems[$-1].encoding));
 
     // writes the resources initial sums to the module
+    writeMessage(verbose, "writing the resources initial sum...");
     outputFname.append("\r\n\r\n");
     outputFname.append("static const resource_sumi = [");
     foreach (i; 0 .. resItems.length -1)
@@ -196,6 +222,7 @@ void main(string[] args){
     outputFname.append(format("\r\n\t" ~ "%.d" ~ "\r\n];", resItems[$-1].initialSum));
 
     // writes the resources encoded sums to the module
+    writeMessage(verbose, "writing the resources encoded sum...");
     outputFname.append("\r\n\r\n");
     outputFname.append("static const resource_sume = [");
     foreach (i; 0 .. resItems.length -1)
@@ -203,9 +230,15 @@ void main(string[] args){
     outputFname.append(format("\r\n\t" ~ "%.d" ~ "\r\n];", resItems[$-1].encodedSum));
 
     // appends the resource accessors template code.
+    writeMessage(verbose, "writing the resources accessors...");
     outputFname.append("\r\n\r\n");
     outputFname.append(import("accessors.d"));
 
-    writeln("resource file written, press any key to exit.");
+    // optional main()
+    getopt(args, config.passThrough, "m|main", &addMain);
+    writeMessage(verbose && addMain, "writing a dummy main()...");
+    if (addMain) outputFname.append("void main(){}");
+
+    writeMessage(true, "\r\n>resource file written, press any key to exit.");
     readln;
 }

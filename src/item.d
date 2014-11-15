@@ -116,6 +116,8 @@ struct ResItem{
             CRC32 ehash;
             ehash.put(cast(ubyte[])_resTxtData);
             _encodedSum = crc322uint(ehash.finish);
+
+            writeMessage(true, format("encoded resource file '%s'", resFile));
         }
 
         /// returns the resource encoded as a string.
