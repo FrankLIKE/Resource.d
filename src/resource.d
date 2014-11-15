@@ -126,6 +126,7 @@ void main(string[] args){
     writeMessage(verbose && opt.length, "creating the resources from --itms...");
     foreach(itm; split(opt, ';')){
         string[] elems = split(itm, '%');
+        if (!elems.length) continue; // allow empty or final semicolon
         assert(elems.length == 3);
         auto enc = to!ResEncoding(elems[2]);
         resItems ~= new ResItem(elems[0], enc, elems[1]);
