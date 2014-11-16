@@ -48,6 +48,7 @@ string splitConstString(char[] input, size_t columns = 80)
     result ~= "\t" ~ "\"" ~ input[hi .. $-1] ~ "\"";
     return result;
 }
+
 /**
  * Adds a log message if verbose.
  */
@@ -56,4 +57,11 @@ void writeMessage(bool verbose, string aMessage){
     if (!verbose) return;
     writefln("> %s", aMessage);
     stdout.flush;
+}
+
+/**
+ * Self-centered init.
+ */
+void reset(T)(ref T aValue){
+    aValue = aValue.init;
 }

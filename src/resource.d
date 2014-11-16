@@ -90,7 +90,7 @@ void main(string[] args){
     // get files to be encoded, without ident, by encoder kind.
     void getFilesToEncode(string aOpt, ref string[] aHolder)
     {
-        opt = opt.init;
+        opt.reset;
         getopt(args, config.passThrough, aOpt, &opt);
         foreach (elem; split(opt, ';')){
             aHolder ~= elem;
@@ -105,7 +105,7 @@ void main(string[] args){
     // get folder of files to be be encoded, without ident, by encoder kind.
     void getFoldersToEncode(string foldOpt, ref string[] aHolder)
     {
-        opt = opt.init;
+        opt.reset;
         getopt(args, config.passThrough, foldOpt, &opt);
         foreach(foldname; split(opt, ';')){
             writeMessage(verbose, format("processing folder '%s'", foldname));
@@ -121,7 +121,7 @@ void main(string[] args){
     getFoldersToEncode("dz85", fz85s);
 
     // get fully described items
-    opt = opt.init;
+    opt.reset;
     getopt(args, config.passThrough, "itms", &opt);
     writeMessage(verbose && opt.length, "creating the resources from --itms...");
     foreach(itm; split(opt, ';')){
@@ -153,7 +153,7 @@ void main(string[] args){
         string r;
         writeMessage(true, "\r\n");
         while(true) {
-            r = r.init;
+            r.reset;
             if (i != 3)
                 writeMessage(true, "the output file already exists, press Y+ENTER to overwrite or N+ENTER to quit");
             else
@@ -161,9 +161,9 @@ void main(string[] args){
             stdout.flush;
             r = readln;
             ++i;
-            if ((r == "Y\n") | (r == "y\n"))
+            if (r == "Y\n" || r == "y\n")
                 break;
-            if ((i == 4) | (r == "N\n") | (r == "n\n"))
+            if (i == 4 || r == "N\n" || r == "n\n")
                 return;
         }
 
@@ -214,7 +214,7 @@ void main(string[] args){
         outputFname.append(format("\r\n\t%s.%s,", ResEncoding.stringof, resItems[i].encoding));
     outputFname.append(format("\r\n\t%s.%s \r\n];", ResEncoding.stringof, resItems[$-1].encoding));
 
-    // writes the resources initial sums to the module
+    // writes the initial sums to the module
     writeMessage(verbose, "writing the resources initial sum...");
     outputFname.append("\r\n\r\n");
     outputFname.append("static const resource_sumi = [");
@@ -222,7 +222,7 @@ void main(string[] args){
         outputFname.append(format("\r\n\t" ~ "%.d" ~ ",", resItems[i].initialSum));
     outputFname.append(format("\r\n\t" ~ "%.d" ~ "\r\n];", resItems[$-1].initialSum));
 
-    // writes the resources encoded sums to the module
+    // writes the encoded sums to the module
     writeMessage(verbose, "writing the resources encoded sum...");
     outputFname.append("\r\n\r\n");
     outputFname.append("static const resource_sume = [");
