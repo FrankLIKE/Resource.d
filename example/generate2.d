@@ -8,7 +8,8 @@ static const resource_txt = [
 	"89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF610000001974455874536F6674776172650041646F626520496D616765526561647971C9653C000000E84944415478DAAC53390A844010AC011F606CA2088289E00384D97798F911033F62E8371CF0018A89911888B10FF0586740F158173C3A9886A28FAAEE1E328E239E98C49FB22CE3C9D18BB94CD7F58F2830B1A0379AD385C1300CCF24F47DBF00BEEF0B1F04C126F00C3F14E8BA0E7BEC1F7E903007EE659DE184AF314DD35BBBB46D9B48EBEAAF0CB1AA2A244982A669D0B6ADC0645986A228701C079AA69DCFA0280A8461C8EF02AAAAC2300C81D775CD6522CB32789E07D3347F33983BBAAE0BCBB2369DF23C4714452266CD580C9131766B889452F2CE254E05F867FA5CCC8D17094FEC2BC000E86B85BA4D90B09F0000000049454E44AE426082",
 	"A469D4B5F6DF896AD84687D64F654DB0D4B6D406B46D874B6A40D4886ADAD48AD464DA8B86A4BD684ADB7867AD6B48A4D7BA64DB4564654DA4B64A6DB7AD1B23A1D32A4B6AD45B41A3D4B416AD4BA68D4B65A4DB6565E6B6D54F6E464A65465D44C665D4C6D4646D4C",
 	"E0BA82E0BAADE0BB89E0BA8DE0BA81E0BAB4E0BA99E0BB81E0BA81E0BB89E0BAA7E0BB84E0BA94E0BB89E0BB82E0BA94E0BA8DE0BA97E0BAB5E0BB88E0BAA1E0BAB1E0BA99E0BA9AE0BB8DE0BB88E0BB84E0BA94E0BB89E0BB80E0BAAEE0BAB1E0BA94E0BB83E0BAABE0BB89E0BA82E0BAADE0BB89E0BA8DE0BB80E0BA88E0BAB1E0BA9A",
-	"E0A4AE20E0A495E0A4BEE0A481E0A49A20E0A496E0A4BEE0A4A820E0A4B8E0A495E0A58DE0A49BE0A58220E0A4B020E0A4AEE0A4B2E0A4BEE0A48820E0A495E0A587E0A4B9E0A4BF20E0A4A8E0A58020E0A4B9E0A581E0A4A8E0A58DE2808DE0A4A8E0A58D"
+	"E0A4AE20E0A495E0A4BEE0A481E0A49A20E0A496E0A4BEE0A4A820E0A4B8E0A495E0A58DE0A49BE0A58220E0A4B020E0A4AEE0A4B2E0A4BEE0A48820E0A495E0A587E0A4B9E0A4BF20E0A4A8E0A58020E0A4B9E0A581E0A4A8E0A58DE2808DE0A4A8E0A58D",
+	"C3A9C3A825C2A720C3A020C2A320C3A7C3A720E282AC20E282AC20C3B9"
 ];
 
 static const resource_idt = [
@@ -19,10 +20,12 @@ static const resource_idt = [
 	"res_img3",
 	"res_rnd1",
 	"res_utf8_1",
-	"res_utf8_2"
+	"res_utf8_2",
+	"res_utf8_3"
 ];
 
 static const resource_enc = [
+	ResEncoding.base16,
 	ResEncoding.base16,
 	ResEncoding.base16,
 	ResEncoding.base16,
@@ -41,7 +44,8 @@ static const resource_sumi = [
 	2501545372,
 	9092863,
 	2472579997,
-	2342516385
+	2342516385,
+	419127154
 ];
 
 static const resource_sume = [
@@ -52,12 +56,25 @@ static const resource_sume = [
 	1068072948,
 	469500517,
 	1406068463,
-	143152600
+	143152600,
+	1183704631
 ];
 
-/// enumerates the supported encoder kinds.
+/**
+ * describes the encoding algorithm of a resource.
+ * An encoder is actually a binary-to-text converter. The result has to be readable as a string in a D source file.
+ *  - safeness: only raw is unsafe: the strings can contain invalid UTF-8 chars.
+ *  - padding: the encoder can add a few chars (up to 2 for base64, up to 7 for Z85), this explains the "approximate" qualification of the yield.
+ *  - approximate yield: from best to worst, (input_bytes/output_chars ratio): raw (1/1), z85 (4/5), b64 (3/4), b16 (1/2).
+ *  - e7F is a kind of percent-encoding so its yield varies from 1/1 (ascii strings) to 1/3 (binary data).
+ *  - usage: raw and e7F should only be used for ASCII, ANSI or UTF-8 strings, other encoders can be used for everything.
+ */
 public enum ResEncoding {
-    raw, base16, base64, z85
+    raw,    /// cast the raw data as an utf8 string.
+    base16, /// encode as an hexadecimal representation.
+    base64, /// encode as a base64 representation.
+    z85,    /// encode as a z85 representation
+    e7F,    /// encode as a e7F representation.
 };
 
 /// returns the index of the resource associated to resIdent.
@@ -101,6 +118,7 @@ public bool decode(size_t resIndex, ref ubyte[] dest){
         case ResEncoding.base16 : decodeb16(resIndex, dest); break;
         case ResEncoding.base64 : decodeb64(resIndex, dest); break;
         case ResEncoding.z85    : decodez85(resIndex, dest); break;
+        case ResEncoding.e7F    : decodee7F(resIndex, dest); break;
     }
     return true;
 }
@@ -121,25 +139,37 @@ private void decodeb64(size_t resIndex, ref ubyte[] dest){
     import std.base64;
     dest = Base64.decode(resource_txt[resIndex]);
 }
-// cf. with z85_d for more information.
-private ubyte[] Z85_decode (in char[] input)
-{
-    ///  Maps base 85 to base 256
-    static immutable ubyte[96] decoder = [
-        0x00, 0x44, 0x00, 0x54, 0x53, 0x52, 0x48, 0x00,
-        0x4B, 0x4C, 0x46, 0x41, 0x00, 0x3F, 0x3E, 0x45,
-        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
-        0x08, 0x09, 0x40, 0x00, 0x49, 0x42, 0x4A, 0x47,
-        0x51, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2A,
-        0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30, 0x31, 0x32,
-        0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A,
-        0x3B, 0x3C, 0x3D, 0x4D, 0x00, 0x4E, 0x43, 0x00,
-        0x00, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10,
-        0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
-        0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20,
-        0x21, 0x22, 0x23, 0x4F, 0x00, 0x50, 0x00, 0x00
-    ];
 
+///  Maps base 85 to base 256
+private static immutable ubyte[96] z85_decoder = [
+    0x00, 0x44, 0x00, 0x54, 0x53, 0x52, 0x48, 0x00,
+    0x4B, 0x4C, 0x46, 0x41, 0x00, 0x3F, 0x3E, 0x45,
+    0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+    0x08, 0x09, 0x40, 0x00, 0x49, 0x42, 0x4A, 0x47,
+    0x51, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2A,
+    0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30, 0x31, 0x32,
+    0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A,
+    0x3B, 0x3C, 0x3D, 0x4D, 0x00, 0x4E, 0x43, 0x00,
+    0x00, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10,
+    0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+    0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20,
+    0x21, 0x22, 0x23, 0x4F, 0x00, 0x50, 0x00, 0x00
+];
+
+/**
+ * Decodes a string as a byte array.
+ *
+ * Modified version of the reference implementation of Z85_decode.
+ * It automatically handles the tail added to grant the 4/5 i/o ratio,
+ * as described in Z85_endcode()
+ */
+private ubyte[] Z85_decode(in char[] input)
+in
+{
+    assert(input.length % 5 == 0);
+}
+body
+{
     // reference implementation
     size_t decoded_size = input.length * 4 / 5;
     ubyte[] decoded;
@@ -149,7 +179,7 @@ private ubyte[] Z85_decode (in char[] input)
     uint value;
     while (char_nbr < input.length)
     {
-        value = value * 85 + decoder [cast(ubyte) input[char_nbr++] - 32];
+        value = value * 85 + z85_decoder [cast(ubyte) input[char_nbr++] - 32];
         if (char_nbr % 5 == 0)
         {
             uint divisor = 256 * 256 * 256;
@@ -174,4 +204,30 @@ private void decodez85(size_t resIndex, ref ubyte[] dest){
     dest = Z85_decode(resource_txt[resIndex]);
 }
 
+/**
+ * "7F" text-to-binary decoder.
+ */
+private ubyte[] decode_7F(in char[] input)
+{
+    ubyte[] result;
+    size_t i;
+    while(i < input.length)
+    {
+        char c = input[i];
+        if (c == 0x7F)
+        {    
+            char[2] digits = input[i+1 .. i+3];
+            import std.conv;
+            result ~= to!ubyte(digits[], 16);    
+            i += 2;
+        } 
+        else result ~= c;
+        ++i;
+    }    
+    return result;
+}
+
+private void decodee7F(size_t resIndex, ref ubyte[] dest){
+    dest = decode_7F(resource_txt[resIndex]);
+}
 void main(){}

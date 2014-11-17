@@ -9,15 +9,17 @@
 | --fb16=file;file.....:       "           base16   "     |
 | --fb64=file;file.....:       "           base64   "     |
 | --fz85=file;file.....:       "           base85   "     |
+| --fe7F=file;file.....:       "           7F             |
 +---------------------------------------------------------+
 | --draw=folder;folder.: folders entries are utf8 encoded.|
 | --db16=folder;folder.:       "             base16 "     |
 | --db64=folder;folder.:       "             base64 "     |
 | --dz85=folder;folder.:       "             base85 "     |
+| --dz85=folder;folder.:       "             7F     "     |
 +---------------------------------------------------------+
 | --itms=<itm>;<itm>...: itm are encoded according to...  |
 | <itm>=<f>%<i>%<e>....: itm is formed of 3 members       |
 | <f>=filename.........: file whose content is to encode  |
 | <i>=identifier.......: a string used to identify the res|
-| <e>=encoder kind.....: raw, base16, base64 or z85       |
+| <e>=encoder kind.....: raw, base16, base64, z85 or e7F  |
 +---------------------------------------------------------+

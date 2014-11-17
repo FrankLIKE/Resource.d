@@ -7,20 +7,7 @@ import std.string: format;
 
 import utils;
 
-/**
- * describes the encoding algorithm of a resource.
- * An encoder is actually a binary-to-text converter. The result has to be readable as a string in a D source file.
- *  - safeness: only raw is unsafe: the strings can contain invalid UTF-8 chars.
- *  - padding: the encoder can add a few chars (up to 2 for base64, up to 7 for Z85), this explains the "approximate" qualification of the yield.
- *  - approximate yield: from best to worst, (input_bytes/output_chars ratio): raw (1/1), z85 (4/5), b64 (3/4), b16 (1/2).
- *  - usage: raw should only be used for ASCII, ANSI or UTF-8 strings, other encoders can be used for everything.
- */
-enum ResEncoding {
-    raw,    /// cast the raw data as an utf8 string.
-    base16, /// encode as an hexadeciaml representation.
-    base64, /// encode as a base64 representation.
-    z85     /// encode as a z85 representation.
-};
+mixin(import("encoders_knd.d"));
 
 /**
  * Resource item.
@@ -47,6 +34,8 @@ struct ResItem{
                     return encodeb64();
                 case ResEncoding.z85:
                     return encodez85();
+                case ResEncoding.e7F:
+                    return encodee7F();
             }
         }
 
@@ -82,6 +71,15 @@ struct ResItem{
             _resTxtData = Z85_encode(_resRawData);
             assert(_resTxtData.length == _resRawData.length * 5 / 4,
                 "z85 representation length mismatches");
+            return true;
+        }
+        
+        /// encodes _resRawData to a e7F string
+        bool encodee7F()
+        {
+            import e7F;
+            scope(failure) return false;
+            _resTxtData = encode_7F(_resRawData);
             return true;
         }
 
