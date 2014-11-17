@@ -226,7 +226,7 @@ void main(string[] args){
     // writes the initial sums to the module
     writeMessage(verbose, "writing the resources initial sum...");
     outputFname.append("\r\n\r\n");
-    outputFname.append("static const resource_sumi = [");
+    outputFname.append("static const uint[] resource_sumi = [");
     foreach (i; 0 .. resItems.length -1)
         outputFname.append(format("\r\n\t" ~ "%.d" ~ ",", resItems[i].initialSum));
     outputFname.append(format("\r\n\t" ~ "%.d" ~ "\r\n];", resItems[$-1].initialSum));
@@ -234,7 +234,7 @@ void main(string[] args){
     // writes the encoded sums to the module
     writeMessage(verbose, "writing the resources encoded sum...");
     outputFname.append("\r\n\r\n");
-    outputFname.append("static const resource_sume = [");
+    outputFname.append("static const uint[] resource_sume = [");
     foreach (i; 0 .. resItems.length -1)
         outputFname.append(format("\r\n\t" ~ "%.d" ~ ",", resItems[i].encodedSum));
     outputFname.append(format("\r\n\t" ~ "%.d" ~ "\r\n];", resItems[$-1].encodedSum));

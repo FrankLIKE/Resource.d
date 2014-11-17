@@ -1,3 +1,8 @@
+/// returns the resource count.
+public size_t resourceCount(){
+    return resource_idt.length;
+}
+
 /// returns the index of the resource associated to resIdent.
 public size_t resourceIndex(string resIdent){
     import std.algorithm;
@@ -7,6 +12,16 @@ public size_t resourceIndex(string resIdent){
 /// returns the identifier of the resIndex-th resource.
 public string resourceIdent(size_t resIndex){
     return resource_idt[resIndex];
+}
+
+/// returns the signature of the decoded resource form.
+uint resourceInitCRC(size_t resIndex){
+    return resource_sumi[resIndex];
+}
+
+/// returns the signature of the encoded resource form.
+uint resourceFinalCRC(size_t resIndex){
+    return resource_sume[resIndex];
 }
 
 /// returns true if the encoded form of a resource is corrupted.
@@ -23,6 +38,27 @@ public bool isResourceEncCorrupted(size_t resIndex){
     else
         foreach(i; 0..4) * (ptr + i) = summarr[3-i];
     return sum != resource_sume[resIndex];
+}
+
+/// returns true if the decoded form of a resource is corrupted.
+public bool isResourceDecCorrupted(size_t resIndex){
+    ubyte[] dec;
+    bool result;
+    result = decode(resIndex, dec);
+    if (!result) return false;
+    //
+    import std.digest.crc;
+    CRC32 hash;
+    hash.put(dec);
+    auto summarr = hash.finish;
+    uint sum;
+    ubyte* ptr = cast(ubyte*) &sum;
+    version(BigEndian)
+        foreach(i; 0..4) * (ptr + i) = summarr[i];
+    else
+        foreach(i; 0..4) * (ptr + i) = summarr[3-i]; 
+    //
+    return (sum == resource_sumi[resIndex]);    
 }
 
 /// returns the encoder kind of the resIndex-th resource.
