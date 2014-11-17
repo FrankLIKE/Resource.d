@@ -27,11 +27,12 @@ static uint resColumn = 100;
             ident: an identifier
             enc: either raw, base16, base64, z85
 
-    raw/b16,b64,z85 res, using filename as ident.
+    raw/b16, b64, z85, e7F res, using filename as ident.
     --fraw=file;file;file
     --fb16=file;file;file
     --fb64=file;file;file
     --fz85=file;file;file
+    --fe7F=file;file;file
 
     output filename
     --of=<relative or absolute fname>
@@ -53,6 +54,7 @@ static uint resColumn = 100;
     --db16=directory;directory
     --db64=directory;directory
     --dz85=directory;directory
+    --de7F=directory;directory
 */
 void main(string[] args){
 
@@ -74,6 +76,7 @@ void main(string[] args){
     string[] fb16s;
     string[] fb64s;
     string[] fz85s;
+    string[] fe7Fs;
 
     writeln(header);
     // help display
@@ -101,6 +104,7 @@ void main(string[] args){
     getFilesToEncode("fb16", fb16s);
     getFilesToEncode("fb64", fb64s);
     getFilesToEncode("fz85", fz85s);
+    getFilesToEncode("fe7F", fe7Fs);
 
     // get folder of files to be be encoded, without ident, by encoder kind.
     void getFoldersToEncode(string foldOpt, ref string[] aHolder)
@@ -119,6 +123,7 @@ void main(string[] args){
     getFoldersToEncode("db16", fb16s);
     getFoldersToEncode("db64", fb64s);
     getFoldersToEncode("dz85", fz85s);
+    getFoldersToEncode("de7F", fe7Fs);
 
     // get fully described items
     opt.reset;
@@ -136,7 +141,8 @@ void main(string[] args){
         if (!fraws.length)
             if (!fb16s.length)
                 if (!fb64s.length)
-                    if (!fz85s.length){
+                    if (!fz85s.length)
+                        if (!fe7Fs.length){
         writeMessage(true, "nothing to encode");
         return;
     }
@@ -187,6 +193,9 @@ void main(string[] args){
     writeMessage(verbose && fz85s.length, "creating the resources from --fz85...");
     foreach (fname; fz85s)
         resItems ~= new ResItem(fname, ResEncoding.z85);
+    writeMessage(verbose && fe7Fs.length, "creating the resources from --fe7F...");
+    foreach (fname; fe7Fs)
+        resItems ~= new ResItem(fname, ResEncoding.e7F);
 
     // writes the resource representations to the module
     writeMessage(verbose, "writing the resources text...");

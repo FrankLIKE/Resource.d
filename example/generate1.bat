@@ -10,6 +10,7 @@
 --fb16=..\res\res_ansi_1.txt;..\res\res_ansi_2.txt ^
 --fb64=..\res\res_img1.png;..\res\res_img2.png ^
 --fz85=..\res\res_rnd1.dat ^
+--fe7F=..\res\res_utf8_3.txt ^
 --of=generate1.d ^
 --om=project.resources
 
