@@ -15,11 +15,11 @@
 | --db16=folder;folder.:       "             base16 "     |
 | --db64=folder;folder.:       "             base64 "     |
 | --dz85=folder;folder.:       "             base85 "     |
-| --dz85=folder;folder.:       "             7F     "     |
+| --de7F=folder;folder.:       "             7F     "     |
 +---------------------------------------------------------+
 | --itms=<itm>;<itm>...: itm are encoded according to...  |
 | <itm>=<f>%<i>%<e>....: itm is formed of 3 members       |
 | <f>=filename.........: file whose content is to encode  |
-| <i>=identifier.......: a string used to identify the res|
+| <i>=identifier.......: string identifying the ressource |
 | <e>=encoder kind.....: raw, base16, base64, z85 or e7F  |
 +---------------------------------------------------------+
