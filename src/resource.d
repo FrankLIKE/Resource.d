@@ -242,6 +242,8 @@ void main(string[] args){
     // appends the resource accessors template code.
     writeMessage(verbose, "writing the resources accessors...");
     outputFname.append("\r\n\r\n");
+    outputFname.append(import("encoders_knd.d"));
+    outputFname.append("\r\n\r\n");
     outputFname.append(import("accessors.d"));
 
     // optional main()

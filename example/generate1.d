@@ -9,8 +9,6 @@ static const resource_txt = [
 	"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAPJJREFUeNqkk00OREAQhV9PbOzsCeEEDkC4h6NILJzEUUxYWXEBImFvZ+NndCc6hpgJKmmdfKpKv1eazPOMJyHQR1mW8bI5F2vfhmG4rMFyCufGxx1+gmmankkYx5GDIAjYHobhV+IZPzQYhgF79osfJKyJe1lnnNAx5nl+a5amaRJh2/1OvFZddGVZBt/3URQFZ+uijL6jOSs7eCCKIvq+RxRF0DQNiqIw3jQN6roGIYTlbH1gHqRpyj2oqgpJkqBtW3Rdx5gkSZBlGbZtQ9d1XmxZFjmMUVVVeJ53qvnvGG/9iUsDepnci7Ux9+BJfAQYAA4ymWUAhzHmAAAAAElFTkSuQmCC",
 	"Q?Ot^{tpZw/HyUEpI0n8!v9<hV#7N>ycZp8ytdf{!mvo>HnqH@o51P6T.QF6/sCIEmpY$7Q{-)jX2*O]Q0>F:ysDDNQTVT^TXkKJoj:{NwO72j!Ly6Ln[yE$m8&//-)!KooAk4)0@@r3",
 	"C3A9C3A8%C2A7 C3A0 C2A3 C3A7C3A7 E282AC E282AC C3B9"
-	"C3A9C3A8%C2A7 C3A0 C2A3 C3A7C3A7 E282AC E282AC C3B9"
-	ຂອ້ຍກິນແກ້ວໄດ້ໂດຍທີ່ມັນບໍ່ໄດ້ເຮັດໃຫ້ຂອ້ຍເຈັບ
 ];
 
 static const resource_idt = [
@@ -57,7 +55,22 @@ static const resource_sume = [
 	516939061
 ];
 
-mixin(import("encoders_knd.d"));
+/**
+ * describes the encoding algorithm of a resource.
+ * An encoder is actually a binary-to-text converter. The result has to be readable as a string in a D source file.
+ *  - safeness: only raw is unsafe: the strings can contain invalid UTF-8 chars.
+ *  - padding: the encoder can add a few chars (up to 2 for base64, up to 7 for Z85), this explains the "approximate" qualification of the yield.
+ *  - approximate yield: from best to worst, (input_bytes/output_chars ratio): raw (1/1), z85 (4/5), b64 (3/4), b16 (1/2).
+ *  - e7F is a kind of percent-encoding so its yield varies from 1/1 (ascii strings) to 1/3 (binary data).
+ *  - usage: raw and e7F should only be used for ASCII, ANSI or UTF-8 strings, other encoders can be used for everything.
+ */
+public enum ResEncoding {
+    raw,    /// cast the raw data as an utf8 string.
+    base16, /// encode as an hexadecimal representation.
+    base64, /// encode as a base64 representation.
+    z85,    /// encode as a z85 representation
+    e7F,    /// encode as a e7F representation.
+};
 
 /// returns the index of the resource associated to resIdent.
 public size_t resourceIndex(string resIdent){

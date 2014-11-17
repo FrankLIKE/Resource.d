@@ -1,5 +1,3 @@
-mixin(import("encoders_knd.d"));
-
 /// returns the index of the resource associated to resIdent.
 public size_t resourceIndex(string resIdent){
     import std.algorithm;
