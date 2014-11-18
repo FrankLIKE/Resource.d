@@ -4,6 +4,8 @@ lib
 doc
 temp
 bin
+.dub
+dub.selections.json
 *.obj
 *.exe
 *.bak
@@ -19,7 +21,6 @@ bin
 *.lps
 *.bin
 *.npp
-*.json
 *.html
 *.js
 *.css

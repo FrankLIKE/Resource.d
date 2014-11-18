@@ -1,0 +1,22 @@
+{
+	"name": "Resource.d",
+	"version": "0.1.0",
+	"description": "Resource encoder and manager for programs written in D2",
+	"authors": ["Basile Burg"],
+	"homepage": "https://github.com/BBasile/Resource.d",
+	"license": "MIT",
+
+	"sourceFiles": ["src/resource.d", "src/item.d", "src/utils.d", "src/z85.d", "src/e7F.d"],
+	"excludedSourceFiles": ["src/accessors.d"],
+	"stringImportPaths": ["src/"],
+
+	"configurations": 
+	[
+		{
+			"platforms": ["windows" ,"linux"],
+			"name": "release",
+			"targetType": "executable",
+			"targetPath": "bin/"
+		},
+	]
+}
