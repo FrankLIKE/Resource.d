@@ -1,6 +1,6 @@
 {
 	"name": "resource-d",
-	"version": "0.1.0",
+	"version": "v0.1.0",
 	"description": "Resource encoder and manager for programs written in D2",
 	"authors": ["Basile Burg"],
 	"homepage": "https://github.com/BBasile/Resource.d",
