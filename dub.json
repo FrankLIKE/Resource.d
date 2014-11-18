@@ -1,5 +1,5 @@
 {
-	"name": "Resource.d",
+	"name": "resource.d",
 	"version": "0.1.0",
 	"description": "Resource encoder and manager for programs written in D2",
 	"authors": ["Basile Burg"],
