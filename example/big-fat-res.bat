@@ -1,6 +1,6 @@
 
-:: test for huge resources. main() is added for testing compilation.
-:: currently can be compiled but not linked. (48 MB obj file crashes optlink)
+:: test for huge resources. main() is added to test the compilation.
+:: produces a 47Mb obj, seems to be the top limit for optlink.
 
 ..\bin\resource.d.exe ^
 -v ^
@@ -37,6 +37,48 @@
 ..\bin\resource.d.exe%%resource_27%%base16;^
 ..\bin\resource.d.exe%%resource_28%%z85;^
 ..\bin\resource.d.exe%%resource_29%%base64;^
-..\bin\resource.d.exe%%resource_30%%base16
+..\bin\resource.d.exe%%resource_30%%base16;^
+..\bin\resource.d.exe%%resource_31%%z85;^
+..\bin\resource.d.exe%%resource_32%%base64;^
+..\bin\resource.d.exe%%resource_33%%base16;^
+..\bin\resource.d.exe%%resource_34%%z85;^
+..\bin\resource.d.exe%%resource_35%%base64;^
+..\bin\resource.d.exe%%resource_36%%base16;^
+..\bin\resource.d.exe%%resource_37%%z85;^
+..\bin\resource.d.exe%%resource_38%%base64;^
+..\bin\resource.d.exe%%resource_39%%base16;^
+..\bin\resource.d.exe%%resource_40%%z85;^
+..\bin\resource.d.exe%%resource_41%%base64;^
+..\bin\resource.d.exe%%resource_42%%base16;^
+..\bin\resource.d.exe%%resource_43%%z85;^
+..\bin\resource.d.exe%%resource_44%%base64;^
+..\bin\resource.d.exe%%resource_45%%base16;^
+..\bin\resource.d.exe%%resource_46%%z85;^
+..\bin\resource.d.exe%%resource_47%%base64;^
+..\bin\resource.d.exe%%resource_48%%base16;^
+..\bin\resource.d.exe%%resource_49%%z85;^
+..\bin\resource.d.exe%%resource_50%%base64;^
+..\bin\resource.d.exe%%resource_51%%base16;^
+..\bin\resource.d.exe%%resource_52%%z85;^
+..\bin\resource.d.exe%%resource_53%%base64;^
+..\bin\resource.d.exe%%resource_54%%base16;^
+..\bin\resource.d.exe%%resource_55%%z85;^
+..\bin\resource.d.exe%%resource_56%%base64;^
+..\bin\resource.d.exe%%resource_57%%base16;^
+..\bin\resource.d.exe%%resource_58%%z85;^
+..\bin\resource.d.exe%%resource_59%%base64;^
+..\bin\resource.d.exe%%resource_60%%base16;^
+..\bin\resource.d.exe%%resource_61%%z85;^
+..\bin\resource.d.exe%%resource_62%%base64;^
+..\bin\resource.d.exe%%resource_63%%base16;^
+..\bin\resource.d.exe%%resource_64%%z85;^
+..\bin\resource.d.exe%%resource_65%%base64;^
+..\bin\resource.d.exe%%resource_66%%base16;^
+..\bin\resource.d.exe%%resource_61%%z85;^
+..\bin\resource.d.exe%%resource_62%%base64;^
+..\bin\resource.d.exe%%resource_63%%base16;^
+..\bin\resource.d.exe%%resource_65%%z85;^
+..\bin\resource.d.exe%%resource_66%%base64;^
+..\bin\resource.d.exe%%resource_67%%base16;
 
 pause

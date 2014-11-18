@@ -12,50 +12,6 @@ import utils, item;
 /// resource strings are splitted in multpiles lines
 static uint resColumn = 100;
 
-
-/*  Options
-    =======
-
-    (generates a template with empty resources, allow to compile/develop with a valid
-    import while resources are not yet ready. at least --of must also be specified.
-    -t|--tmp)
-
-    some fully described items
-    --itms=<itm format>;<itm format>
-        itm format: <fname>%<ident>%<enc>
-            fname: a filename
-            ident: an identifier
-            enc: either raw, base16, base64, z85
-
-    raw/b16, b64, z85, e7F res, using filename as ident.
-    --fraw=file;file;file
-    --fb16=file;file;file
-    --fb64=file;file;file
-    --fz85=file;file;file
-    --fe7F=file;file;file
-
-    output filename
-    --of=<relative or absolute fname>
-
-    output module, optional
-    --om=<qualified.module.name>
-
-    general help
-    --help|-h
-
-    add a main() to the resource file, to test quickly its validity
-    --main|-m
-
-    verbose
-    --verbose|-v
-
-    raw/b16,b64,z85 res, using filenames in each dir as ident, non recursive.
-    --draw=directory;directory
-    --db16=directory;directory
-    --db64=directory;directory
-    --dz85=directory;directory
-    --de7F=directory;directory
-*/
 void main(string[] args){
 
     // resources to write in the module
