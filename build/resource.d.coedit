@@ -8,7 +8,7 @@ object CurrentProject: TCEProject
       messagesOptions.showColumnsNumber = True
       outputOptions.noBoundsCheck = False
       outputOptions.boundsCheck = onAlways
-      pathsOptions.outputFilename = '<CPP>\..\bin\resource.d.exe'
+      pathsOptions.outputFilename = '<CPP>..\bin\resource.d.exe'
       pathsOptions.Imports.Strings = (
         '<CPP>..\src\'
       )
@@ -37,7 +37,7 @@ object CurrentProject: TCEProject
       outputOptions.boundsCheck = offAlways
       outputOptions.optimizations = True
       outputOptions.release = True
-      pathsOptions.outputFilename = '<CPP>\..\bin\resource.d.exe'
+      pathsOptions.outputFilename = '<CPP>..\bin\resource.d.exe'
       pathsOptions.Imports.Strings = (
         '<CPP>..\src\'
       )
