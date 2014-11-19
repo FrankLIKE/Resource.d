@@ -13,9 +13,9 @@ It can be compared to the Windows P.E resource system but additionally it's:
 * the resources are **directly put in the source code** by using various binary-to-text encoders (including: *UTF-8*, *base16*, *base64*, *Z85* and *e7F*)
 
 The encoding is the most important part of this tool, since the resources must be valid D source text.
-For example, this raw pattern *FFFFFFFF0C* would be invalid if explicitly cast as chars of a string litteral.
+For example, this raw pattern *0xFFFFFFFF0C* would be invalid if explicitly cast as chars of a string litteral.
 ( *0xFFFFFFFF* exceeds *0x7FFFFFFF*, the max UTF-32 value, cf.[supported source code encoding](http://dlang.org/lex) ).
-When a resource represents a *\*.bmp*, a *\*.dll* or a *\*.so*, such pattern are common, so encoding is mandatory.
+When a resource represents a _*.bmp_, a _*.dll_ or a _*.so_, such pattern are common, so encoding is mandatory.
 
 #### Setup
 ----------
@@ -23,6 +23,7 @@ When a resource represents a *\*.bmp*, a *\*.dll* or a *\*.so*, such pattern are
 Setup files are located in the sub folder named `build`:
 * a [Coedit project file](https://github.com/BBasile/Coedit) is included. It's cross-platform.
 * more simply the shell script for Linux or the batch file for Windows.
+
 Additionally, a DUB package description is located in project root folder. 
 
 #### Usage
