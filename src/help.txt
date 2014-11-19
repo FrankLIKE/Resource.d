@@ -9,7 +9,7 @@
 | --fb16=file;file.....:       "           base16   "     |
 | --fb64=file;file.....:       "           base64   "     |
 | --fz85=file;file.....:       "           base85   "     |
-| --fe7F=file;file.....:       "           7F             |
+| --fe7F=file;file.....:       "           7F       "     |
 +---------------------------------------------------------+
 | --draw=folder;folder.: folders entries are utf8 encoded.|
 | --db16=folder;folder.:       "             base16 "     |

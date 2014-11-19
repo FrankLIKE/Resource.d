@@ -10,19 +10,20 @@ and some accessors functions to extract and use those data.
 It can be compared to the Windows P.E resource system but additionally it's:
 * **multi-platform**: the same resource system works on the 3 major platforms.
 * **cross-platform**: the D module generated on a platform doesn't have to be re-generated on another one.
-* the resources are **directly put in the source code** by using various binary-to-text encoders (including: *UTF-8*, *base16*, *base64* and *Z85*.)
+* the resources are **directly put in the source code** by using various binary-to-text encoders (including: *UTF-8*, *base16*, *base64*, *Z85* and *e7F*)
 
 The encoding is the most important part of this tool, since the resources must be valid D source text.
 For example, this raw pattern *FFFFFFFF0C* would be invalid if explicitly cast as chars of a string litteral.
 ( *0xFFFFFFFF* exceeds *0x7FFFFFFF*, the max UTF-32 value, cf.[supported source code encoding](http://dlang.org/lex) ).
-When a resource represents a \**.bmp*, a \**.dll* or a \**.so*, these kind of pattern are common, so encoding is mandatory.
+When a resource represents a *\*.bmp*, a *\*.dll* or a *\*.so*, such pattern are common, so encoding is mandatory.
 
 #### Setup
 ----------
 
 Setup files are located in the sub folder named `build`:
-* a Coedit project file is included. It's cross-platform.
+* a [Coedit project file](https://github.com/BBasile/Coedit) is included. It's cross-platform.
 * more simply the shell script for Linux or the batch file for Windows.
+Additionally, a DUB package description is located in project root folder. 
 
 #### Usage
 ----------
@@ -41,7 +42,7 @@ Compose a command-line using the following options and run the tool:
 | --fb16=file;file.....:       "           base16   "     |
 | --fb64=file;file.....:       "           base64   "     |
 | --fz85=file;file.....:       "           base85   "     |
-| --fe7F=file;file.....:       "           7F             |
+| --fe7F=file;file.....:       "           7F       "     |
 +---------------------------------------------------------+
 | --draw=folder;folder.: folders entries are utf8 encoded.|
 | --db16=folder;folder.:       "             base16 "     |
@@ -72,6 +73,7 @@ uint resourceInitCRC(size_t resIndex);
 
 /// returns the signature of the encoded resource form.
 uint resourceFinalCRC(size_t resIndex);
+
 /// returns true if the encoded form of a resource is corrupted.
 public bool isResourceEncCorrupted(size_t resIndex);
 
