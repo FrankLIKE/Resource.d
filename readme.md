@@ -70,10 +70,10 @@ public size_t resourceIndex(string resIdent);
 public string resourceIdent(size_t resIndex);
 
 /// returns the signature of the decoded resource form.
-uint resourceInitCRC(size_t resIndex);
+public uint resourceInitCRC(size_t resIndex);
 
 /// returns the signature of the encoded resource form.
-uint resourceFinalCRC(size_t resIndex);
+public uint resourceFinalCRC(size_t resIndex);
 
 /// returns true if the encoded form of a resource is corrupted.
 public bool isResourceEncCorrupted(size_t resIndex);

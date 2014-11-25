@@ -15,12 +15,12 @@ public string resourceIdent(size_t resIndex){
 }
 
 /// returns the signature of the decoded resource form.
-uint resourceInitCRC(size_t resIndex){
+public uint resourceInitCRC(size_t resIndex){
     return resource_sumi[resIndex];
 }
 
 /// returns the signature of the encoded resource form.
-uint resourceFinalCRC(size_t resIndex){
+public uint resourceFinalCRC(size_t resIndex){
     return resource_sume[resIndex];
 }
 
@@ -114,7 +114,7 @@ private static immutable ubyte[96] z85_decoder = [
 ];
 
 /**
- * Decodes a string as a byte array.
+ * Decodes a z85 string as a byte array.
  *
  * Modified version of the reference implementation of Z85_decode.
  * It automatically handles the tail added to grant the 4/5 i/o ratio,
