@@ -31,7 +31,6 @@ Additionally, a DUB package description is located in project root folder.
 
 Compose a command-line using the following options and run the tool:
 ```
-+---------------------------------------------------------+
 | -h --help............: displays this message.           |
 | -m --main............: adds an empty main().            |
 | -v --verbose.........: verbose output.                  |
@@ -52,9 +51,10 @@ Compose a command-line using the following options and run the tool:
 | --de7F=folder;folder.:       "             7F     "     |
 +---------------------------------------------------------+
 | --itms=<itm>;<itm>...: itm are encoded according to...  |
-| <itm>=<f>%<i>%<e>....: itm is formed of 3 members       |
+| <itm>=<f>%<i>%<t>%<e>: itm is formed of 4 members       |
 | <f>=filename.........: file whose content is to encode  |
-| <i>=identifier.......: string identifying the ressource |
+| <i>=identifier.......: string identifying the resource  |
+| <t>=metadata.........: additional data for the resource |
 | <e>=encoder kind.....: raw, base16, base64, z85 or e7F  |
 +---------------------------------------------------------+
 ```
@@ -68,6 +68,9 @@ public size_t resourceIndex(string resIdent);
 
 /// returns the identifier of the resIndex-th resource.
 public string resourceIdent(size_t resIndex);
+
+/// returns the metadata of the resIndex-th resource.
+public string resourceMeta(size_t resIndex);
 
 /// returns the signature of the decoded resource form.
 public uint resourceInitCRC(size_t resIndex);

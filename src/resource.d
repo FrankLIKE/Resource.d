@@ -88,9 +88,9 @@ void main(string[] args){
     foreach(itm; split(opt, ';')){
         string[] elems = split(itm, '%');
         if (!elems.length) continue; // allow empty or final semicolon
-        assert(elems.length == 3);
-        auto enc = to!ResEncoding(elems[2]);
-        resItems ~= new ResItem(elems[0], enc, elems[1]);
+        assert(elems.length == 4);
+        auto enc = to!ResEncoding(elems[3]);
+        resItems ~= new ResItem(elems[0], enc, elems[1], elems[2]);
     }
 
     if (!resItems.length)
@@ -170,6 +170,14 @@ void main(string[] args){
     foreach (i; 0 .. resItems.length -1)
         outputFname.append(format("\r\n\t" ~ "\"" ~ "%s" ~ "\"" ~ ",", resItems[i].identifier));
     outputFname.append(format("\r\n\t" ~ "\"" ~ "%s" ~ "\"" ~ "\r\n];", resItems[$-1].identifier));
+    
+    // writes the resources metadata to the module
+    writeMessage(verbose, "writing the resources metadata...");
+    outputFname.append("\r\n\r\n");
+    outputFname.append("static const resource_mdt = [");
+    foreach (i; 0 .. resItems.length -1)
+        outputFname.append(format("\r\n\t" ~ "\"" ~ "%s" ~ "\"" ~ ",", resItems[i].metaData));
+    outputFname.append(format("\r\n\t" ~ "\"" ~ "%s" ~ "\"" ~ "\r\n];", resItems[$-1].metaData));    
 
     // writes the resources encoder kind to the module
     writeMessage(verbose, "writing the resources kind...");

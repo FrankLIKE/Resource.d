@@ -19,6 +19,7 @@ struct ResItem{
         static const resFileMsg = "resource file '%s' ";
         ResEncoding _resEncoding;
         string _resIdentifier;
+        string _resMetaData;
         char[] _resTxtData;
         ubyte[] _resRawData;
         uint _initialSum;
@@ -86,7 +87,7 @@ struct ResItem{
     public:
 
         /// creates and encodes a new resource item.
-        this(string resFile, ResEncoding resEnc, string resIdent = "")
+        this(string resFile, ResEncoding resEnc, string resIdent = "", string resMeta = "")
         {
             this._resEncoding = resEnc;
 
@@ -107,6 +108,8 @@ struct ResItem{
             this._resIdentifier = resIdent;
             if (this._resIdentifier == "")
                 this._resIdentifier = resFile.baseName.stripExtension;
+                
+            this._resMetaData = resMeta;
 
             if (!encodeDispatcher)
                 throw new Exception(format(resFileMsg ~ "encoding failed", resFile));
@@ -123,6 +126,9 @@ struct ResItem{
 
         /// returns the resource identifier.
         string identifier(){return _resIdentifier;}
+        
+        /// returns the resource metadata.
+        string metaData(){return _resMetaData;}
 
         /// returns the resource encoding kind.
         ResEncoding encoding(){return _resEncoding;}

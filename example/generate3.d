@@ -10,6 +10,11 @@ static const resource_idt = [
 	"resource_2"
 ];
 
+static const resource_mdt = [
+	"TAGS=88-bla-kaput",
+	"TAGS=12-bla-nihoa"
+];
+
 static const resource_enc = [
 	ResEncoding.z85,
 	ResEncoding.base64 
@@ -58,13 +63,18 @@ public string resourceIdent(size_t resIndex){
     return resource_idt[resIndex];
 }
 
+/// returns the metadata of the resIndex-th resource.
+public string resourceMeta(size_t resIndex){
+    return resource_mdt[resIndex];
+}
+
 /// returns the signature of the decoded resource form.
-uint resourceInitCRC(size_t resIndex){
+public uint resourceInitCRC(size_t resIndex){
     return resource_sumi[resIndex];
 }
 
 /// returns the signature of the encoded resource form.
-uint resourceFinalCRC(size_t resIndex){
+public uint resourceFinalCRC(size_t resIndex){
     return resource_sume[resIndex];
 }
 
@@ -158,7 +168,7 @@ private static immutable ubyte[96] z85_decoder = [
 ];
 
 /**
- * Decodes a string as a byte array.
+ * Decodes a z85 string as a byte array.
  *
  * Modified version of the reference implementation of Z85_decode.
  * It automatically handles the tail added to grant the 4/5 i/o ratio,

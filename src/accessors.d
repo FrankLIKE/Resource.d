@@ -14,6 +14,11 @@ public string resourceIdent(size_t resIndex){
     return resource_idt[resIndex];
 }
 
+/// returns the metadata of the resIndex-th resource.
+public string resourceMeta(size_t resIndex){
+    return resource_mdt[resIndex];
+}
+
 /// returns the signature of the decoded resource form.
 public uint resourceInitCRC(size_t resIndex){
     return resource_sumi[resIndex];

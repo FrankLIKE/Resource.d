@@ -18,8 +18,9 @@
 | --de7F=folder;folder.:       "             7F     "     |
 +---------------------------------------------------------+
 | --itms=<itm>;<itm>...: itm are encoded according to...  |
-| <itm>=<f>%<i>%<e>....: itm is formed of 3 members       |
+| <itm>=<f>%<i>%<t>%<e>: itm is formed of 4 members       |
 | <f>=filename.........: file whose content is to encode  |
-| <i>=identifier.......: string identifying the ressource |
+| <i>=identifier.......: string identifying the resource  |
+| <t>=metadata.........: additional data for the resource |
 | <e>=encoder kind.....: raw, base16, base64, z85 or e7F  |
 +---------------------------------------------------------+
