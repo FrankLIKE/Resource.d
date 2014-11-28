@@ -215,6 +215,7 @@ void main(string[] args){
     writeMessage(verbose && addMain, "writing a dummy main()...");
     if (addMain) outputFname.append("void main(){}");
 
-    writeMessage(true, "\r\n>resource file written, press any key to exit.");
+    writeMessage(true, "\r\n> resource file written, press any key to exit.");
+    stdout.flush;
     readln;
 }

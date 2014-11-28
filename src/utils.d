@@ -56,7 +56,6 @@ void writeMessage(bool verbose, string aMessage){
     import std.stdio;
     if (!verbose) return;
     writefln("> %s", aMessage);
-    stdout.flush;
 }
 
 /**
