@@ -39,7 +39,6 @@ string splitConstString(char[] input, size_t columns = 80)
     size_t lo, hi;
     string result;
     auto lines = input.length / columns;
-    auto tail = input.length - lines * columns;
     foreach(i; 0 .. lines){
         lo = i * columns;
         hi = lo + columns;
@@ -53,7 +52,7 @@ string splitConstString(char[] input, size_t columns = 80)
  * Adds a log message if verbose.
  */
 void writeMessage(bool verbose, string aMessage){
-    import std.stdio;
+    import std.stdio : writefln;
     if (!verbose) return;
     writefln("> %s", aMessage);
 }

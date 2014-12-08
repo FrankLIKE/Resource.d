@@ -59,7 +59,7 @@ struct ResItem{
 
         /// encodes _resRawData to a base64 string
         bool encodeb64(){
-            import std.base64;
+            import std.base64: Base64;
             scope(failure) return false;
             _resTxtData = Base64.encode(_resRawData);
             return true;
@@ -67,7 +67,7 @@ struct ResItem{
 
         /// encodes _resRawData to a Z85 string
         bool encodez85(){
-            import z85;
+            import z85: Z85_encode;
             scope(failure) return false;
             _resTxtData = Z85_encode(_resRawData);
             assert(_resTxtData.length == _resRawData.length * 5 / 4,
@@ -78,7 +78,7 @@ struct ResItem{
         /// encodes _resRawData to a e7F string
         bool encodee7F()
         {
-            import e7F;
+            import e7F: encode_7F;
             scope(failure) return false;
             _resTxtData = encode_7F(_resRawData);
             return true;
@@ -99,7 +99,7 @@ struct ResItem{
             if (!_resRawData.length)
                 throw new Exception(format(resFileMsg ~ "is empty", resFile));
 
-            import std.digest.crc;
+            import std.digest.crc: CRC32;
             CRC32 ihash;
             ihash.put(_resRawData);
             _initialSum = crc322uint(ihash.finish);

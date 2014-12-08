@@ -15,7 +15,7 @@ private bool[14] isWhite7F = [
  */
 char[] encode_7F(ubyte[] input)
 {
-    import utils;
+    import utils : ubyte2Hex;
     char[] result;
     foreach(b; input){
         //if ((b < 14 && isWhite7F[b]) || b > 0x7E)
@@ -42,7 +42,7 @@ ubyte[] decode_7F(in char[] input)
         { 
             assert(i+2 < input.length);
             char[2] digits = input[i+1 .. i+3];
-            import std.conv;
+            import std.conv : to;
             result ~= to!ubyte(digits[], 16);    
             i += 2;
         } 

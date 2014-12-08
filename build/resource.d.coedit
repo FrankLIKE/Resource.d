@@ -9,7 +9,7 @@ object CurrentProject: TCEProject
       outputOptions.noBoundsCheck = False
       outputOptions.boundsCheck = onAlways
       pathsOptions.outputFilename = '<CPP>..\bin\resource.d.exe'
-      pathsOptions.Imports.Strings = (
+      pathsOptions.imports.Strings = (
         '<CPP>..\src\'
       )
       preBuildProcess.options = []
@@ -38,7 +38,7 @@ object CurrentProject: TCEProject
       outputOptions.optimizations = True
       outputOptions.release = True
       pathsOptions.outputFilename = '<CPP>..\bin\resource.d.exe'
-      pathsOptions.Imports.Strings = (
+      pathsOptions.imports.Strings = (
         '<CPP>..\src\'
       )
       preBuildProcess.options = []
@@ -66,7 +66,7 @@ object CurrentProject: TCEProject
       outputOptions.noBoundsCheck = False
       outputOptions.boundsCheck = onAlways
       pathsOptions.outputFilename = '<CPP>..\bin\resource.d.exe'
-      pathsOptions.Imports.Strings = (
+      pathsOptions.imports.Strings = (
         '<CPP>..\src\'
       )
       preBuildProcess.options = []
