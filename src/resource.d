@@ -11,8 +11,9 @@ import utils, item;
 
 /// resource strings are splitted in multpiles lines
 static uint resColumn = 100;
-
+ 
 void main(string[] args){
+
 
     // resources to write in the module
     ResItem*[] resItems;

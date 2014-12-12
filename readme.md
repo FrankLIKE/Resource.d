@@ -31,6 +31,7 @@ Additionally, a DUB package description is located in project root folder.
 
 Compose a command-line using the following options and run the tool:
 ```
++---------------------------------------------------------+
 | -h --help............: displays this message.           |
 | -m --main............: adds an empty main().            |
 | -v --verbose.........: verbose output.                  |
@@ -58,13 +59,13 @@ Compose a command-line using the following options and run the tool:
 | <e>=encoder kind.....: raw, base16, base64, z85 or e7F  |
 +---------------------------------------------------------+
 ```
-The output module can be imported in the target project and can be used with the following **API** (integrated to each resource module produced by the tool):
+The output module can be imported in the target project and can be used with the following *API* (integrated to each resource module produced by the tool):
 ```D
 /// returns the resource count.
 public size_t resourceCount();
 
 /// returns the index of the resource associated to resIdent.
-public size_t resourceIndex(string resIdent);
+public ptrdiff_t resourceIndex(string resIdent);
 
 /// returns the identifier of the resIndex-th resource.
 public string resourceIdent(size_t resIndex);
@@ -91,7 +92,24 @@ public ResEncoding resourceEncoding(size_t resIndex);
 public bool decode(size_t resIndex, ref ubyte[] dest);
 ```
 
-A few examples are available in the aptly named `example` folder. 
+A few examples are available in the aptly named `example` folder.
+They illustrate how to generate a resource module. 
+Additionaly, here is a short example of the *API* usage:
+
+```D
+// the resource module generated for this program
+import myResource.d
+import std.file;
+
+auto index = resourceIndex("myResourceIdentifier");
+if(index != -1) {
+    ubyte[] resourceData;
+    if (decode(index, resourceData)) {
+        string filename = "myFileName.txt";
+        std.file.write(filename, resourceData);
+    }
+}
+```
 
 #### Other Information
 ----------------------
