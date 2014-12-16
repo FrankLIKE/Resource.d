@@ -1,6 +1,8 @@
 
 :: test for huge resources. main() is added to test the compilation.
 :: produces a 47Mb obj, seems to be the top limit for optlink.
+:: if you're not sure about the origin of "big-fat" then here it is
+:: https://www.youtube.com/watch?v=vhDViHTOZ5c
 
 ..\bin\resource.d.exe ^
 -v ^
