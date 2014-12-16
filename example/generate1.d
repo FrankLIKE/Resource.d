@@ -22,6 +22,17 @@ static const resource_idt = [
 	"res_utf8_3"
 ];
 
+static const resource_mdt = [
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	""
+];
+
 static const resource_enc = [
 	ResEncoding.raw,
 	ResEncoding.raw,
@@ -78,7 +89,7 @@ public size_t resourceCount(){
 }
 
 /// returns the index of the resource associated to resIdent.
-public size_t resourceIndex(string resIdent){
+public ptrdiff_t resourceIndex(string resIdent){
     import std.algorithm;
     return countUntil(resource_idt, resIdent);
 }
@@ -88,13 +99,18 @@ public string resourceIdent(size_t resIndex){
     return resource_idt[resIndex];
 }
 
+/// returns the metadata of the resIndex-th resource.
+public string resourceMeta(size_t resIndex){
+    return resource_mdt[resIndex];
+}
+
 /// returns the signature of the decoded resource form.
-uint resourceInitCRC(size_t resIndex){
+public uint resourceInitCRC(size_t resIndex){
     return resource_sumi[resIndex];
 }
 
 /// returns the signature of the encoded resource form.
-uint resourceFinalCRC(size_t resIndex){
+public uint resourceFinalCRC(size_t resIndex){
     return resource_sume[resIndex];
 }
 
@@ -188,7 +204,7 @@ private static immutable ubyte[96] z85_decoder = [
 ];
 
 /**
- * Decodes a string as a byte array.
+ * Decodes a z85 string as a byte array.
  *
  * Modified version of the reference implementation of Z85_decode.
  * It automatically handles the tail added to grant the 4/5 i/o ratio,

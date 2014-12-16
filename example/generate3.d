@@ -53,7 +53,7 @@ public size_t resourceCount(){
 }
 
 /// returns the index of the resource associated to resIdent.
-public size_t resourceIndex(string resIdent){
+public ptrdiff_t resourceIndex(string resIdent){
     import std.algorithm;
     return countUntil(resource_idt, resIdent);
 }
